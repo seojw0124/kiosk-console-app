@@ -29,17 +29,14 @@ class Menu {
                        << ${category.categoryName} 메뉴 >>
         """.trimIndent())
         when (category.categoryId) {
-            1 -> beverageItemMenus.forEach {
-                println("${it.id}. ${it.name} - ${it.price}원")
-            }
-
-            2 -> foodItemMenus.forEach {
-                println("${it.id}. ${it.name} - ${it.price}원")
-            }
-
-            3 -> productItemMenus.forEach {
-                println("${it.id}. ${it.name} - ${it.price}원")
-            }
+            1 -> beverageItemMenus.forEach { it.displayInfo() }
+            2 -> foodItemMenus.forEach { it.displayInfo() }
+            3 -> productItemMenus.forEach { it.displayInfo() }
         }
+        println("""
+            
+            0. 뒤로가기
+            ====================================
+        """.trimIndent())
     }
 }

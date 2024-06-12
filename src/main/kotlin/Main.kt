@@ -14,7 +14,7 @@ fun main() {
                 val categoryItem = category.getCategoryItem(categoryId)
                 categoryItem?.let { menu.showDetailMenuByCategory(it) }
                 while (true) {
-                    print("메뉴를 선택하세요(뒤로가기: 0): ")
+                    print("메뉴를 선택하세요: ")
                     val itemId = readln().toIntOrNull() ?: 0
                     if (itemId == 0) break
 

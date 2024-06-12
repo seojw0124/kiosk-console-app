@@ -1,3 +1,3 @@
 abstract class AbstractMenu {
-    abstract fun showDetailMenu()
+    abstract fun displayInfo()
 }
