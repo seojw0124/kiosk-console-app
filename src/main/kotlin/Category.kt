@@ -6,6 +6,10 @@ class Category(private val categories: ArrayList<CategoryItem>) {
         return categories.find { it.categoryId == categoryId }
     }
 
+    fun getItemCount(): Int {
+        return categories.size - 1 // 장바구니 카테고리는 제외
+    }
+
     fun showCategory() {
         println("""
             ====================================

@@ -1,9 +1,7 @@
 import model.CategoryItem
 import utils.KoreanUtil
 
-class Menu(
-    list: List<AbstractMenu>
-) {
+class Menu(list: ArrayList<AbstractMenu>) {
 
     private val drinks = list.filter { it.categoryId == 1 }
     private val foods = list.filter { it.categoryId == 2 }
@@ -18,14 +16,13 @@ class Menu(
         }
     }
 
-    fun addToCart(item: AbstractMenu, quantity: Int) {
-        var word: String = ""
-        if (item.categoryId == 1) {
-            word = "잔"
-        } else {
-            word = "개"
+    fun getMenuItemCount(categoryId: Int): Int {
+        return when (categoryId) {
+            1 -> drinks.size
+            2 -> foods.size
+            3 -> products.size
+            else -> 0
         }
-        println("${item.name} ${quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
     }
 
     fun showDetailMenu(category: CategoryItem) {
