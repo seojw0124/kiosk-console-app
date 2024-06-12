@@ -17,6 +17,22 @@ fun main() {
                     print("메뉴를 선택하세요(뒤로가기: 0): ")
                     val itemId = readln().toIntOrNull() ?: 0
                     if (itemId == 0) break
+
+//                    val itemId = readln().toIntOrNull() ?: 0
+//                    if (itemId == 0) break
+//                    val item = menu.getItem(categoryId, itemId)
+//                    item?.let {
+//                        println("${it.name}을 선택하셨습니다.")
+//                        println("수량을 입력하세요: ")
+//                        val quantity = readln().toIntOrNull() ?: 0
+//                        if (quantity == 0) {
+//                            println("수량을 다시 입력해주세요.")
+//                            continue
+//                        }
+//                        val order = Order(it, quantity)
+//                        println("주문이 완료되었습니다. 주문 내역을 확인하세요.")
+//                        println(order)
+//                    } ?: println("잘못된 메뉴 번호입니다.")
                 }
             }
             0 -> break
