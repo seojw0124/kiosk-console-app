@@ -1,5 +1,6 @@
 import model.CartItem
 import utils.KoreanUtil
+import java.text.DecimalFormat
 
 class Cart {
 
@@ -24,6 +25,7 @@ class Cart {
 
     fun showCartList() {
         var totalPrice = 0
+        val decimalFormat = DecimalFormat("#,###")
 
         println("""
             ====================================
@@ -31,10 +33,10 @@ class Cart {
         """.trimIndent())
         cartList.forEach {
             totalPrice += it.price * it.quantity
-            println("${it.name} x ${it.quantity} ........ ${it.price * it.quantity}원")
+            println("${it.name} x ${it.quantity} ................ ${decimalFormat.format(it.price * it.quantity)}원")
         }
         println("""
-            총액: ${totalPrice}원
+            총액: ${decimalFormat.format(totalPrice)}원
             
             1. 결제하기    0. 뒤로가기
             ====================================
