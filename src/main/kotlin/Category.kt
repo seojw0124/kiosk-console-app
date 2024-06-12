@@ -1,12 +1,6 @@
 import model.CategoryItem
 
-class Category {
-
-    private val categories: ArrayList<CategoryItem> = arrayListOf(
-        CategoryItem(1, "음료"),
-        CategoryItem(2, "푸드"),
-        CategoryItem(3, "상품")
-    )
+class Category(private val categories: ArrayList<CategoryItem>) {
 
     fun getCategoryItem(categoryId: Int): CategoryItem? {
         return categories.find { it.categoryId == categoryId }

@@ -1,4 +1,4 @@
-class Beverage(
+class Drink(
     private val id: Int,
     private val categoryId: Int,
     private val name: String,
