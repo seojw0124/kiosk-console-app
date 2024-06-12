@@ -1,6 +1,6 @@
 package model
 
-data class Category(
+data class CategoryItem(
     val categoryId: Int,
     val categoryName: String
 )

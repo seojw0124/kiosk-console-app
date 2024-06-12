@@ -1,49 +1,45 @@
-import model.Beverage
-import model.Food
-import model.Product
+import model.BeverageItem
+import model.CategoryItem
+import model.FoodItem
+import model.ProductItem
 
 class Menu {
 
-    private val beverageMenu: ArrayList<Beverage> = arrayListOf(
-        Beverage(1, "아메리카노", 4500),
-        Beverage(2, "카페라떼", 5500),
-        Beverage(3, "카푸치노", 5000)
+    private val beverageItemMenus: ArrayList<BeverageItem> = arrayListOf(
+        BeverageItem(1, 1, "아메리카노", 4500),
+        BeverageItem(2, 1, "카페라떼", 5500),
+        BeverageItem(3, 1, "카푸치노", 5000)
     )
 
-    private val foodMenu: ArrayList<Food> = arrayListOf(
-        Food(1, "카스테라", 4500),
-        Food(2, "케이크", 5700),
-        Food(3, "마카롱", 2700)
+    private val foodItemMenus: ArrayList<FoodItem> = arrayListOf(
+        FoodItem(1, 2, "카스테라", 4500),
+        FoodItem(2, 2, "케이크", 5700),
+        FoodItem(3, 2, "마카롱", 2700)
     )
 
-    private val productMenu: ArrayList<Product> = arrayListOf(
-        Product(1, "머그컵", 14000),
-        Product(2, "텀블러", 25000),
-        Product(3, "원두", 18000)
+    private val productItemMenus: ArrayList<ProductItem> = arrayListOf(
+        ProductItem(1, 3, "머그컵", 14000),
+        ProductItem(2, 3, "텀블러", 25000),
+        ProductItem(3, 3, "원두", 18000)
     )
 
-    fun showDetailMenu(categoryId: Int) {
+    fun showDetailMenuByCategory(category: CategoryItem) {
         println("""
-            [${categoryToString(categoryId)} 메뉴]
-            ${getMenu(categoryId)}
+            ====================================
+                       << ${category.categoryName} 메뉴 >>
         """.trimIndent())
-    }
+        when (category.categoryId) {
+            1 -> beverageItemMenus.forEach {
+                println("${it.id}. ${it.name} - ${it.price}원")
+            }
 
-    private fun categoryToString(categoryId: Int): String {
-        return when (categoryId) {
-            1 -> "음료"
-            2 -> "푸드"
-            3 -> "상품"
-            else -> "잘못된 번호"
-        }
-    }
+            2 -> foodItemMenus.forEach {
+                println("${it.id}. ${it.name} - ${it.price}원")
+            }
 
-    private fun getMenu(categoryId: Int): String {
-        return when (categoryId) {
-            1 -> beverageMenu.joinToString("\n")
-            2 -> foodMenu.joinToString("\n")
-            3 -> productMenu.joinToString("\n")
-            else -> "잘못된 번호"
+            3 -> productItemMenus.forEach {
+                println("${it.id}. ${it.name} - ${it.price}원")
+            }
         }
     }
 }
