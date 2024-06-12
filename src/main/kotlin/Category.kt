@@ -19,6 +19,6 @@ class Category(private val categories: ArrayList<CategoryItem>) {
             0. 프로그램 종료
             ====================================
         """.trimIndent())
-        print("메뉴를 선택하세요: ")
+        print("카테고리를 선택하세요: ")
     }
 }

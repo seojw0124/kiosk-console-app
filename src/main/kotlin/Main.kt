@@ -3,23 +3,37 @@ import model.CategoryItem
 fun main() {
 
     val categories = Category(initCategoryData())
-    val triple = initMenuData() // Triple 클래스를 사용하여 세 가지 종류의 메뉴를 한 번에 초기화
-    val menu = Menu(triple.first, triple.second, triple.third)
+    val menu = Menu(initMenuData())
 
     println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
     while (true) {
         categories.showCategory()
-        val categoryId = readln().toIntOrNull() ?: 0
 
-        when (categoryId) {
+        when (val categoryId = readInt()) {
             in 1..3 -> {
-                val categoryItem = categories.getCategoryItem(categoryId)
-                categoryItem?.let { menu.showDetailMenuByCategory(it) }
+                val category = categories.getCategoryItem(categoryId)
+                category?.let { menu.showDetailMenu(it) }
                 while (true) {
                     print("메뉴를 선택하세요: ")
-                    val itemId = readln().toIntOrNull() ?: 0
+                    val itemId = readInt()
                     if (itemId == 0) break
+
+                    val item = menu.getItem(categoryId, itemId)
+                    item?.let {
+                        item.displayInfo()
+                        print("수량을 입력하세요: ")
+                        val quantity = readInt()
+                        if (quantity > 0) {
+                            print("장바구니에 담으시겠습니까? (y/n): ")
+                            val answer = readln()
+                            if (answer == "y") {
+                                menu.addToCart(item, quantity)
+                            }
+                        } else {
+                            println("수량은 1 이상이어야 합니다.")
+                        }
+                    }
                 }
             }
             0 -> break
@@ -38,24 +52,20 @@ fun initCategoryData(): ArrayList<CategoryItem> {
     return categories
 }
 
-fun initMenuData(): Triple<ArrayList<Drink>, ArrayList<Food>, ArrayList<Product>> {
-    val drinks: ArrayList<Drink> = arrayListOf(
+fun initMenuData(): List<AbstractMenu> {
+    return listOf(
         Drink(1, 1, "아메리카노", 4500),
         Drink(2, 1, "카페라떼", 5500),
-        Drink(3, 1, "카푸치노", 5000)
-    )
-
-    val foods: ArrayList<Food> = arrayListOf(
+        Drink(3, 1, "카푸치노", 5000),
         Food(1, 2, "카스테라", 4500),
         Food(2, 2, "케이크", 5700),
-        Food(3, 2, "마카롱", 2700)
-    )
-
-    val products: ArrayList<Product> = arrayListOf(
+        Food(3, 2, "마카롱", 2700),
         Product(1, 3, "머그컵", 14000),
         Product(2, 3, "텀블러", 25000),
         Product(3, 3, "원두", 18000)
     )
+}
 
-    return Triple(drinks, foods, products)
+fun readInt(): Int {
+    return readln().toIntOrNull() ?: 0
 }

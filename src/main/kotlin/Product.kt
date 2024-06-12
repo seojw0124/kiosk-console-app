@@ -1,9 +1,9 @@
 class Product(
-    private val id: Int,
-    private val categoryId: Int,
-    private val name: String,
-    private val price: Int
-) : AbstractMenu() {
+    id: Int,
+    categoryId: Int,
+    name: String,
+    price: Int
+) : AbstractMenu(id, categoryId, name, price) {
     override fun displayInfo() {
         println("${id}. $name - ${price}원")
     }
