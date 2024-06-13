@@ -36,6 +36,7 @@ class Cart {
             println("${it.name} x ${it.quantity} ................ ${decimalFormat.format(it.price * it.quantity)}원")
         }
         println("""
+            
             총액: ${decimalFormat.format(totalPrice)}원
             
             1. 결제하기    0. 뒤로가기

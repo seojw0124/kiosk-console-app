@@ -8,44 +8,15 @@ fun main() {
 
     println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
+    runKiosk(categories, menu, cart)
+}
+
+private fun runKiosk(categories: Category, menu: Menu, cart: Cart) {
     while (true) {
         categories.showCategory()
-
         when (val categoryId = readInt()) {
             in 1..categories.getItemCount() -> {
-                val category = categories.getCategoryItem(categoryId)
-                category?.let { menu.showDetailMenu(it) }
-                while (true) {
-                    print("메뉴를 선택하세요: ")
-                    val itemId = readInt()
-
-                    when (itemId) {
-                        0 -> break
-                        in 1..menu.getMenuItemCount(categoryId) -> {
-                            val item = menu.getItem(categoryId, itemId)
-                            item?.let {
-                                item.displayInfo()
-                                print("수량을 입력하세요: ")
-                                val quantity = readInt()
-                                if (quantity > 0) {
-                                    print("장바구니에 담으시겠습니까? (y/n): ")
-                                    val answer = readln()
-                                    when (answer) {
-                                        "y" -> cart.addItem(item, quantity)
-                                        "n" -> println("장바구니에 담기를 취소했습니다.")
-                                        else -> println("잘못된 입력입니다.")
-                                    }
-                                } else {
-                                    println("수량은 1 이상이어야 합니다.")
-                                }
-                            }
-                        }
-                        else -> {
-                            println("없는 메뉴입니다.")
-                            continue
-                        }
-                    }
-                }
+                showDetailMenuByCategory(categories, categoryId, menu, cart)
             }
             9 -> {
                 cart.showCartList()
@@ -59,8 +30,75 @@ fun main() {
                     else -> println("잘못된 번호입니다.")
                 }
             }
-            0 -> break
-            else -> println("없는 카테고리입니다.")
+            0 -> {
+                break
+            }
+            else -> {
+                println("없는 카테고리입니다. 다시 입력해주세요.")
+            }
+        }
+    }
+}
+
+private fun showDetailMenuByCategory(categories: Category, categoryId: Int, menu: Menu, cart: Cart) {
+    val category = categories.getCategoryItem(categoryId)
+    category?.let {
+        menu.showDetailMenu(it)
+        selectMenuItem(menu, categoryId, cart)
+    }
+}
+
+private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
+    while (true) {
+        print("메뉴를 선택하세요(0: 뒤로가기): ")
+        val itemId = readInt()
+
+        when (itemId) {
+            0 -> {
+                break
+            }
+            in 1..menu.getMenuItemCount(categoryId) -> {
+                val item = menu.getItem(categoryId, itemId)
+                item?.let {
+                    item.displayInfo()
+                    val quantity = getQuantity()
+                    checkAddMenuItemToCart(cart, item, quantity)
+                }
+            }
+            else -> {
+                println("없는 메뉴입니다.")
+                continue
+            }
+        }
+    }
+}
+
+private fun checkAddMenuItemToCart(cart: Cart, item: AbstractMenu, quantity: Int) {
+    while (true) {
+        print("장바구니에 담으시겠습니까? (y/n): ")
+        val answer = readln().lowercase()
+        when (answer) {
+            "y" -> {
+                cart.addItem(item, quantity)
+                break
+            }
+            "n" -> {
+                println("장바구니에 담기를 취소했습니다.")
+                break
+            }
+            else -> println("잘못된 입력입니다.")
+        }
+    }
+}
+
+private fun getQuantity(): Int {
+    while (true) {
+        print("수량을 입력하세요: ")
+        val quantity = readInt()
+        if (quantity > 0) {
+            return quantity
+        } else {
+            println("수량은 1 이상이어야 합니다. 다시 입력해주세요.")
         }
     }
 }
