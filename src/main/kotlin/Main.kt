@@ -1,17 +1,72 @@
 import model.CategoryItem
+import model.UserItem
 
 fun main() {
 
+    val user = User()
     val categories = Category(initCategoryData())
     val menu = Menu(initMenuData())
     val cart = Cart()
 
     println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
-    runKiosk(categories, menu, cart)
+    while (true) {
+        login(user)
+        runKiosk(user, categories, menu, cart)
+    }
 }
 
-private fun runKiosk(categories: Category, menu: Menu, cart: Cart) {
+private fun login(user: User) {
+    val userName = inputMyInfo("name")
+    val money = inputMyInfo("money")
+
+    val userId = if (user.getUserList().isEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
+            1
+        } else {
+            user.getLastCurrentUserId() + 1
+        }
+    user.saveUserInfo(UserItem(userId, userName as String, money as Int))
+    user.setCurrentUser(userId)
+    println("${user.getCurrentUserName()}님 <정우 카페>에 오신 것을 환영합니다!!!!!!!")
+}
+
+private fun inputMyInfo(type: String): Any? {
+    return when (type) {
+        "name" -> {
+            println("이름을 입력해주세요.")
+            while(true) {
+                try {
+                    val originName = readLine()
+                    if(originName?.first() != '_' && originName?.first() != '!') {
+                        return originName
+                    } else {
+                        println("이름을 다시 입력해주세요")
+                    }
+                } catch(e:Exception) {
+                    println("이름을 다시 입력해주세요")
+                }
+            }
+        }
+        "money" -> {
+            println("소지하고 계신 금액을 입력해주세요.")
+            while(true) {
+                try {
+                    val originMoney = readInt()
+                    if(originMoney > 0) {
+                        return originMoney
+                    } else {
+                        println("소지하고 계신 금액을 다시 입력해주세요")
+                    }
+                } catch(e:Exception) {
+                    println("소지하고 계신 금액을 다시 입력해주세요")
+                }
+            }
+        }
+        else -> null
+    }
+}
+
+private fun runKiosk(user: User, categories: Category, menu: Menu, cart: Cart) {
     while (true) {
         categories.showCategory()
         val categoryId = readInt()
