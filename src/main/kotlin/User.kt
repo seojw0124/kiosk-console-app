@@ -9,16 +9,21 @@ class User {
         userList.add(user)
     }
 
-    fun setCurrentUser(userId: Int) {
+    fun setCurrentUser(userId: Int): UserItem {
         currenUser = userList.find { it.userId == userId }
+        return currenUser!!
     }
 
-    fun getUserList(): MutableList<UserItem> {
+    fun getAllUserList(): MutableList<UserItem> {
         return userList
     }
 
-    fun getCurrentUser(): UserItem? {
-        return currenUser
+    fun isUserListEmpty(): Boolean {
+        return userList.isEmpty()
+    }
+
+    fun getCurrentUserId(): Int {
+        return currenUser?.userId ?: 0
     }
 
     fun getCurrentUserName(): String {

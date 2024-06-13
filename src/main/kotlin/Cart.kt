@@ -6,24 +6,26 @@ class Cart {
 
     private val cartList = mutableListOf<CartItem>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
 
-    fun addCartItem(item: AbstractMenu, quantity: Int) {
-        val cartItem = CartItem(
-            item.itemId,
-            item.name,
-            item.price,
-            quantity,
-        )
-        cartList.add(cartItem)
+    fun addCartItem(item: CartItem, categoryId: Int) {
+        cartList.add(item)
 
-        val word = if (item.categoryId == 1) {
+        val word = if (categoryId == 1) {
             "잔"
         } else {
             "개"
         }
-        println("${item.name} ${quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
+        println("${item.itemName} ${item.quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
     }
 
-    fun showCartList() {
+    fun getLastCartItemId(): Int {
+        return cartList.last().cartId
+    }
+
+    fun isCartListEmpty(): Boolean {
+        return cartList.isEmpty()
+    }
+
+    fun showMyCartList() {
         var totalPrice = 0
         val decimalFormat = DecimalFormat("#,###")
 

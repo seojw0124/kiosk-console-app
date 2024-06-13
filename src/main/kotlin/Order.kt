@@ -9,7 +9,7 @@ class Order {
         orderList.add(item)
     }
 
-    fun showOrderList(id: Int) {
+    fun showMyOrderList(id: Int) {
         val order = orderList.find { it.orderId == id }
 
         var totalPrice = 0
