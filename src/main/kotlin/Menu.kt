@@ -1,5 +1,4 @@
 import model.CategoryItem
-import utils.KoreanUtil
 
 class Menu(list: ArrayList<AbstractMenu>) {
 
@@ -7,12 +6,11 @@ class Menu(list: ArrayList<AbstractMenu>) {
     private val foods = list.filter { it.categoryId == 2 }
     private val products = list.filter { it.categoryId == 3 }
 
-    fun getItem(categoryId: Int, itemId: Int): AbstractMenu? {
+    fun getMenuItem(categoryId: Int, itemId: Int): AbstractMenu? {
         return when (categoryId) {
-            1 -> drinks.find { it.id == itemId }
-            2 -> foods.find { it.id == itemId }
-            3 -> products.find { it.id == itemId }
-            else -> null
+            1 -> drinks.find { it.itemId == itemId }
+            2 -> foods.find { it.itemId == itemId }
+            else -> products.find { it.itemId == itemId }
         }
     }
 
@@ -20,8 +18,7 @@ class Menu(list: ArrayList<AbstractMenu>) {
         return when (categoryId) {
             1 -> drinks.size
             2 -> foods.size
-            3 -> products.size
-            else -> 0
+            else -> products.size
         }
     }
 

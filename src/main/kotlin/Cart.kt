@@ -6,9 +6,9 @@ class Cart {
 
     private val cartList = mutableListOf<CartItem>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
 
-    fun addItem(item: AbstractMenu, quantity: Int) {
+    fun addCartItem(item: AbstractMenu, quantity: Int) {
         val cartItem = CartItem(
-            item.id,
+            item.itemId,
             item.name,
             item.price,
             quantity,
@@ -33,7 +33,7 @@ class Cart {
         """.trimIndent())
         cartList.forEach {
             totalPrice += it.price * it.quantity
-            println("${it.name} x ${it.quantity} ................ ${decimalFormat.format(it.price * it.quantity)}원")
+            println("${it.itemName} x ${it.quantity} ................ ${decimalFormat.format(it.price * it.quantity)}원")
         }
         println("""
             

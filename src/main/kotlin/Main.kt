@@ -14,14 +14,17 @@ fun main() {
 private fun runKiosk(categories: Category, menu: Menu, cart: Cart) {
     while (true) {
         categories.showCategory()
-        when (val categoryId = readInt()) {
+        val categoryId = readInt()
+
+        when (categoryId) {
             in 1..categories.getItemCount() -> {
                 showDetailMenuByCategory(categories, categoryId, menu, cart)
             }
             9 -> {
                 cart.showCartList()
                 print("메뉴를 선택하세요: ")
-                when (readInt()) {
+                val selectedCartMenu = readInt()
+                when (selectedCartMenu) {
                     1 -> {
                         println("결제가 완료되었습니다.")
                         break
@@ -58,7 +61,7 @@ private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
                 break
             }
             in 1..menu.getMenuItemCount(categoryId) -> {
-                val item = menu.getItem(categoryId, itemId)
+                val item = menu.getMenuItem(categoryId, itemId)
                 item?.let {
                     item.displayInfo()
                     val quantity = getQuantity()
@@ -77,9 +80,10 @@ private fun checkAddMenuItemToCart(cart: Cart, item: AbstractMenu, quantity: Int
     while (true) {
         print("장바구니에 담으시겠습니까? (y/n): ")
         val answer = readln().lowercase()
+
         when (answer) {
             "y" -> {
-                cart.addItem(item, quantity)
+                cart.addCartItem(item, quantity)
                 break
             }
             "n" -> {

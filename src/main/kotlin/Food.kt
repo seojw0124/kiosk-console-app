@@ -1,10 +1,10 @@
 class Food(
-    id: Int,
+    itemId: Int,
     categoryId: Int,
     name: String,
     price: Int
-) : AbstractMenu(id, categoryId, name, price) {
+) : AbstractMenu(itemId, categoryId, name, price) {
     override fun displayInfo() {
-        println("${id}. $name - ${price}원")
+        println("${itemId}. $name - ${price}원")
     }
 }

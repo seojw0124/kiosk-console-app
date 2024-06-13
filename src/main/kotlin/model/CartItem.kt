@@ -1,8 +1,9 @@
 package model
 
 data class CartItem(
-    val id: Int,
-    val name: String,
+//    val cartId: Int,  cartId는 itemId로 대체
+    val itemId: Int,
+    val itemName: String,
     val price: Int,
     val quantity: Int
 )
