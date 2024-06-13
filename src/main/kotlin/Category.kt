@@ -16,6 +16,7 @@ class Category(private val categories: ArrayList<CategoryItem>) {
                        << 카페 메뉴 >>
         """.trimIndent())
         categories.forEach {
+            if (it.categoryId == 8) println()
             println("${it.categoryId}. ${it.categoryName}")
         }
         println("""

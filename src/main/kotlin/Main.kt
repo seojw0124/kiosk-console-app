@@ -16,7 +16,7 @@ fun main() {
 
     while (true) {
         login(user)
-        runKiosk(user, categories, menu, cart, order)
+        runKiosk(categories, menu, cart, order)
     }
 }
 
@@ -71,7 +71,6 @@ private fun inputMyInfo(type: String): Any? {
 }
 
 private fun runKiosk(
-    user: User,
     categories: Category,
     menu: Menu,
     cart: Cart,
@@ -103,10 +102,8 @@ private fun runKiosk(
                 }
             }
             9 -> {
-                println("결제목록을 출력합니다.")
                 order.showMyOrderList(currentUser.userId)
-                println(currentUser)
-                break
+
             }
             0 -> {
                 break
