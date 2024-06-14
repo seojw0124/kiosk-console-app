@@ -1,8 +1,7 @@
 import model.CartInfo
 import model.CategoryInfo
+import model.OrderInfo
 import model.UserInfo
-
-private lateinit var currentUser: UserInfo // 질문) 이렇게 전역변수로 선언해도 되나요?
 
 fun main() {
 
@@ -12,29 +11,33 @@ fun main() {
     val cartManager = CartManager()
     val orderManager = OrderManager()
 
+    var currentUser: UserInfo? = null
+
     println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
     while (true) {
-        login(userManager)
-        runKiosk(categoryManager, menuManager, cartManager, orderManager)
+        currentUser = login(userManager)
+        runKiosk(currentUser, categoryManager, menuManager, cartManager, orderManager)
     }
 }
 
-private fun login(userManager: UserManager) {
+private fun login(userManager: UserManager): UserInfo {
     val userName = inputMyInfo("name")
     val money = inputMyInfo("money")
 
     val userId =
-        if (userManager.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
+        if (userManager.isUserListEmpty()) {
             1
         } else {
             userManager.getLastUserId() + 1
         }
     userManager.saveUserInfo(UserInfo(userId, userName as String, money as Int))
-    currentUser = userManager.setCurrentUser(userId)
-    println()
-    println("${currentUser.userName} 님 <정우 카페>에 오신 것을 환영합니다!!!")
-    println()
+    if(userManager.setCurrentUser(userId)) {
+        println()
+        println("$userName 님 <정우 카페>에 오신 것을 환영합니다!!!")
+        println()
+    }
+    return UserInfo(userId, userName, money)
 }
 
 private fun inputMyInfo(type: String): Any? {
@@ -74,6 +77,7 @@ private fun inputMyInfo(type: String): Any? {
 }
 
 private fun runKiosk(
+    currentUser: UserInfo,
     categoryManager: CategoryManager,
     menuManager: MenuManager,
     cartManager: CartManager,
@@ -90,7 +94,7 @@ private fun runKiosk(
                 val categoryId = readInt()
                 when (categoryId) {
                     in 1..categoryManager.getItemCount() -> {
-                        showDetailMenuByCategory(categoryManager, categoryId, menuManager, cartManager)
+                        showDetailMenuByCategory(currentUser, categoryManager, categoryId, menuManager, cartManager)
                         isSelectedCategory = true
                     }
                     8 -> {
@@ -99,9 +103,8 @@ private fun runKiosk(
                         val selectedCartMenu = readInt()
                         when (selectedCartMenu) {
                             1 -> {
-                                println("결제가 완료되었습니다.")
                                 isSelectedCategory = true
-                                break
+                                addCartItemToOrder(currentUser, cartManager, orderManager)
                             }
                             0 -> {
                                 isSelectedCategory = true
@@ -125,15 +128,37 @@ private fun runKiosk(
     }
 }
 
-private fun showDetailMenuByCategory(categoryManager: CategoryManager, categoryId: Int, menuManager: MenuManager, cartManager: CartManager) {
+fun addCartItemToOrder(currentUser: UserInfo, cartManager: CartManager, orderManager: OrderManager) {
+    val cartItemList = cartManager.getMyCartItemList(currentUser.userId)
+    println("cartItemList: $cartItemList")
+    val orderId =
+        if (orderManager.isOrderListEmpty()) {
+            1
+        } else {
+            orderManager.getLastOrderItemId() + 1
+        }
+
+    val orderItem = OrderInfo(
+        orderId,
+        currentUser.userId,
+        currentUser.userName,
+        cartItemList,
+        "2024-06-14"
+    )
+    orderManager.addOrderItem(orderItem)
+    cartManager.clearMyCartList()
+    println("결제가 완료되었습니다.")
+}
+
+private fun showDetailMenuByCategory(currentUser: UserInfo, categoryManager: CategoryManager, categoryId: Int, menuManager: MenuManager, cartManager: CartManager) {
     val category = categoryManager.getCategoryItem(categoryId)
     category?.let {
         menuManager.showDetailMenu(it)
-        selectMenuItem(menuManager, categoryId, cartManager)
+        selectMenuItem(currentUser, menuManager, categoryId, cartManager)
     }
 }
 
-private fun selectMenuItem(menuManager: MenuManager, categoryId: Int, cartManager: CartManager) {
+private fun selectMenuItem(currentUser: UserInfo, menuManager: MenuManager, categoryId: Int, cartManager: CartManager) {
     var isExitMenu = false
 
     while (!isExitMenu) {
@@ -150,7 +175,7 @@ private fun selectMenuItem(menuManager: MenuManager, categoryId: Int, cartManage
                             isSelectedMenu = true
                             item.displayDetailInfo()
                             val quantity = getQuantity()
-                            checkAddMenuItemToCart(cartManager, item, quantity)
+                            checkAddMenuItemToCart(currentUser, cartManager, item, quantity)
                         }
                     }
                     0 -> {
@@ -166,7 +191,7 @@ private fun selectMenuItem(menuManager: MenuManager, categoryId: Int, cartManage
     }
 }
 
-private fun checkAddMenuItemToCart(cartManager: CartManager, item: MenuItem, quantity: Int) {
+private fun checkAddMenuItemToCart(currentUser: UserInfo, cartManager: CartManager, item: MenuItem, quantity: Int) {
     var isCancelAddToCart = false
 
     while (!isCancelAddToCart) {
@@ -177,7 +202,7 @@ private fun checkAddMenuItemToCart(cartManager: CartManager, item: MenuItem, qua
                 val answer = readln().lowercase()
                 when (answer) {
                     "y" -> {
-                        addItemToCart(item, quantity, cartManager)
+                        addItemToCart(currentUser, item, quantity, cartManager)
                         isCancelAddToCart = true
                         break
                     }
@@ -195,13 +220,13 @@ private fun checkAddMenuItemToCart(cartManager: CartManager, item: MenuItem, qua
     }
 }
 
-private fun addItemToCart(item: MenuItem, quantity: Int, cartManager: CartManager) {
+private fun addItemToCart(currentUser: UserInfo, item: MenuItem, quantity: Int, cartManager: CartManager) {
     if (currentUser.money < item.price * quantity) {
         println("소지금이 부족합니다. 다른 상품을 선택해주세요.")
         return
     }
     val cartId =
-        if (cartManager.isCartListEmpty()) {
+        if (cartManager.isCartEmpty()) {
         1
     } else {
         cartManager.getLastCartItemId() + 1
@@ -215,6 +240,7 @@ private fun addItemToCart(item: MenuItem, quantity: Int, cartManager: CartManage
         quantity
     )
     cartManager.addCartItem(cartInfo, item.categoryId)
+
     return
 }
 

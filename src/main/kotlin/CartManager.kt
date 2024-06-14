@@ -1,4 +1,5 @@
 import model.CartInfo
+import model.UserInfo
 import utils.KoreanUtil
 import java.text.DecimalFormat
 
@@ -21,8 +22,16 @@ class CartManager {
         return cartList.last().cartId
     }
 
-    fun isCartListEmpty(): Boolean {
+    fun isCartEmpty(): Boolean {
         return cartList.isEmpty()
+    }
+
+    fun getMyCartItemList(userId: Int): List<CartInfo> {
+        return cartList.filter { it.userId == userId }
+    }
+
+    fun clearMyCartList() {
+        cartList.clear()
     }
 
     fun showMyCartList() {

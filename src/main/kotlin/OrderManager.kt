@@ -5,12 +5,20 @@ class OrderManager {
 
     private val orderList = mutableListOf<OrderInfo>()
 
-    fun addOrderItem(item: OrderInfo) {
-        orderList.add(item)
+    fun addOrderItem(list: OrderInfo) {
+        orderList.add(list)
+    }
+
+    fun isOrderListEmpty(): Boolean {
+        return orderList.isEmpty()
+    }
+
+    fun getLastOrderItemId(): Int {
+        return orderList.last().orderId
     }
 
     fun showMyOrderList(id: Int) {
-        val order = orderList.find { it.orderId == id }
+        val order = orderList.find { it.userId == id }
 
         var totalPrice = 0
         val decimalFormat = DecimalFormat("#,###")
@@ -19,8 +27,8 @@ class OrderManager {
             println("""
             ====================================
                         << 주문 내역 >>
-                                    구매자: ${order.userName}
-                                 결제일: ${order.orderDate}
+            구매자: ${order.userName}
+            결제일: ${order.orderDate}
         """.trimIndent())
             order.itemList.forEach {
                 totalPrice += it.price * it.quantity

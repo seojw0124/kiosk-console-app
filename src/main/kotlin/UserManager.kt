@@ -9,9 +9,9 @@ class UserManager {
         userList.add(user)
     }
 
-    fun setCurrentUser(userId: Int): UserInfo {
+    fun setCurrentUser(userId: Int): Boolean {
         currenUser = userList.find { it.userId == userId }
-        return currenUser!!
+        return currenUser != null
     }
 
     fun isUserListEmpty(): Boolean {
