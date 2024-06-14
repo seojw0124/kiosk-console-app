@@ -1,11 +1,11 @@
-import model.OrderItem
+import model.OrderInfo
 import java.text.DecimalFormat
 
-class Order {
+class OrderManager {
 
-    private val orderList = mutableListOf<OrderItem>()
+    private val orderList = mutableListOf<OrderInfo>()
 
-    fun addOrderItem(item: OrderItem) {
+    fun addOrderItem(item: OrderInfo) {
         orderList.add(item)
     }
 

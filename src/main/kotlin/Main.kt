@@ -1,37 +1,37 @@
-import model.CartItem
-import model.CategoryItem
-import model.UserItem
+import model.CartInfo
+import model.CategoryInfo
+import model.UserInfo
 
-private lateinit var currentUser: UserItem // 질문) 이렇게 전역변수로 선언해도 되나요?
+private lateinit var currentUser: UserInfo // 질문) 이렇게 전역변수로 선언해도 되나요?
 
 fun main() {
 
-    val user = User()
-    val categories = Category(initCategoryData())
-    val menu = Menu(initMenuData())
-    val cart = Cart()
-    val order = Order()
+    val userManager = UserManager()
+    val categoryManager = CategoryManager(initCategoryData())
+    val menuManager = MenuManager(initMenuData())
+    val cartManager = CartManager()
+    val orderManager = OrderManager()
 
     println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
     while (true) {
-        login(user)
-        runKiosk(categories, menu, cart, order)
+        login(userManager)
+        runKiosk(categoryManager, menuManager, cartManager, orderManager)
     }
 }
 
-private fun login(user: User) {
+private fun login(userManager: UserManager) {
     val userName = inputMyInfo("name")
     val money = inputMyInfo("money")
 
     val userId =
-        if (user.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
+        if (userManager.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
             1
         } else {
-            user.getLastUserId() + 1
+            userManager.getLastUserId() + 1
         }
-    user.saveUserInfo(UserItem(userId, userName as String, money as Int))
-    currentUser = user.setCurrentUser(userId)
+    userManager.saveUserInfo(UserInfo(userId, userName as String, money as Int))
+    currentUser = userManager.setCurrentUser(userId)
     println()
     println("${currentUser.userName} 님 <정우 카페>에 오신 것을 환영합니다!!!")
     println()
@@ -74,27 +74,27 @@ private fun inputMyInfo(type: String): Any? {
 }
 
 private fun runKiosk(
-    categories: Category,
-    menu: Menu,
-    cart: Cart,
-    order: Order
+    categoryManager: CategoryManager,
+    menuManager: MenuManager,
+    cartManager: CartManager,
+    orderManager: OrderManager
 ) {
     var isExitKiosk = false
 
     while (!isExitKiosk) {
-        categories.showCategory()
+        categoryManager.showCategory()
         var isSelectedCategory = false
 
         while (!isSelectedCategory) {
             try {
                 val categoryId = readInt()
                 when (categoryId) {
-                    in 1..categories.getItemCount() -> {
-                        showDetailMenuByCategory(categories, categoryId, menu, cart)
+                    in 1..categoryManager.getItemCount() -> {
+                        showDetailMenuByCategory(categoryManager, categoryId, menuManager, cartManager)
                         isSelectedCategory = true
                     }
                     8 -> {
-                        cart.showMyCartList()
+                        cartManager.showMyCartList()
                         print("메뉴를 선택하세요: ")
                         val selectedCartMenu = readInt()
                         when (selectedCartMenu) {
@@ -107,22 +107,16 @@ private fun runKiosk(
                                 isSelectedCategory = true
                                 break
                             }
-                            else -> {
-                                println("없는 번호입니다. 다시 입력해주세요.")
-                            }
+                            else -> println("없는 번호입니다. 다시 입력해주세요.")
                         }
                     }
-                    9 -> {
-                        order.showMyOrderList(currentUser.userId)
-                    }
+                    9 -> orderManager.showMyOrderList(currentUser.userId)
                     0 -> {
                         isExitKiosk = true // 외부 루프를 종료하도록 설정
                         isSelectedCategory = true // 내부 루프를 종료하도록 설정
                         break
                     }
-                    else -> {
-                        throw IndexOutOfBoundsException()
-                    }
+                    else -> throw IndexOutOfBoundsException()
                 }
             } catch (e:Exception) {
                 print("없는 카테고리입니다. 다시 입력해주세요. 카테고리: ")
@@ -131,15 +125,15 @@ private fun runKiosk(
     }
 }
 
-private fun showDetailMenuByCategory(categories: Category, categoryId: Int, menu: Menu, cart: Cart) {
-    val category = categories.getCategoryItem(categoryId)
+private fun showDetailMenuByCategory(categoryManager: CategoryManager, categoryId: Int, menuManager: MenuManager, cartManager: CartManager) {
+    val category = categoryManager.getCategoryItem(categoryId)
     category?.let {
-        menu.showDetailMenu(it)
-        selectMenuItem(menu, categoryId, cart)
+        menuManager.showDetailMenu(it)
+        selectMenuItem(menuManager, categoryId, cartManager)
     }
 }
 
-private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
+private fun selectMenuItem(menuManager: MenuManager, categoryId: Int, cartManager: CartManager) {
     var isExitMenu = false
 
     while (!isExitMenu) {
@@ -150,22 +144,20 @@ private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
             try {
                 val itemId = readInt()
                 when (itemId) {
-                    in 1..menu.getMenuItemCount(categoryId) -> {
-                        val item = menu.getMenuItem(categoryId, itemId)
+                    in 1..menuManager.getMenuItemCount(categoryId) -> {
+                        val item = menuManager.getMenuItem(categoryId, itemId)
                         item?.let {
                             isSelectedMenu = true
                             item.displayDetailInfo()
                             val quantity = getQuantity()
-                            checkAddMenuItemToCart(cart, item, quantity)
+                            checkAddMenuItemToCart(cartManager, item, quantity)
                         }
                     }
                     0 -> {
                         isExitMenu = true
                         break
                     }
-                    else -> {
-                        throw IndexOutOfBoundsException()
-                    }
+                    else -> throw IndexOutOfBoundsException()
                 }
             } catch (e:Exception) {
                 print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
@@ -174,7 +166,7 @@ private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
     }
 }
 
-private fun checkAddMenuItemToCart(cart: Cart, item: MenuItem, quantity: Int) {
+private fun checkAddMenuItemToCart(cartManager: CartManager, item: MenuItem, quantity: Int) {
     var isCancelAddToCart = false
 
     while (!isCancelAddToCart) {
@@ -185,7 +177,7 @@ private fun checkAddMenuItemToCart(cart: Cart, item: MenuItem, quantity: Int) {
                 val answer = readln().lowercase()
                 when (answer) {
                     "y" -> {
-                        addItemToCart(item, quantity, cart)
+                        addItemToCart(item, quantity, cartManager)
                         isCancelAddToCart = true
                         break
                     }
@@ -194,10 +186,7 @@ private fun checkAddMenuItemToCart(cart: Cart, item: MenuItem, quantity: Int) {
                         isCancelAddToCart = true
                         break
                     }
-                    else -> {
-                        // y, n 이외의 값이 입력되었을 때 예외처리
-                        throw Exception()
-                    }
+                    else -> throw Exception()
                 }
             } catch (e:Exception) {
                 print("잘못된 입력입니다. 다시 입력해주세요: ")
@@ -206,18 +195,18 @@ private fun checkAddMenuItemToCart(cart: Cart, item: MenuItem, quantity: Int) {
     }
 }
 
-private fun addItemToCart(item: MenuItem, quantity: Int, cart: Cart) {
+private fun addItemToCart(item: MenuItem, quantity: Int, cartManager: CartManager) {
     if (currentUser.money < item.price * quantity) {
         println("소지금이 부족합니다. 다른 상품을 선택해주세요.")
         return
     }
     val cartId =
-        if (cart.isCartListEmpty()) {
+        if (cartManager.isCartListEmpty()) {
         1
     } else {
-        cart.getLastCartItemId() + 1
+        cartManager.getLastCartItemId() + 1
     }
-    val cartItem = CartItem(
+    val cartInfo = CartInfo(
         cartId,
         currentUser.userId,
         item.itemId,
@@ -225,7 +214,7 @@ private fun addItemToCart(item: MenuItem, quantity: Int, cart: Cart) {
         item.price,
         quantity
     )
-    cart.addCartItem(cartItem, item.categoryId)
+    cartManager.addCartItem(cartInfo, item.categoryId)
     return
 }
 
@@ -241,13 +230,13 @@ private fun getQuantity(): Int {
     }
 }
 
-fun initCategoryData(): ArrayList<CategoryItem> {
+fun initCategoryData(): ArrayList<CategoryInfo> {
     return arrayListOf(
-        CategoryItem(1, "음료"),
-        CategoryItem(2, "푸드"),
-        CategoryItem(3, "상품"),
-        CategoryItem(8, "장바구니"),
-        CategoryItem(9, "결제목록")
+        CategoryInfo(1, "음료"),
+        CategoryInfo(2, "푸드"),
+        CategoryInfo(3, "상품"),
+        CategoryInfo(8, "장바구니"),
+        CategoryInfo(9, "결제목록")
     )
 }
 

@@ -1,6 +1,6 @@
 package model
 
-data class CartItem(
+data class CartInfo(
     val cartId: Int,
     val userId: Int,
     val itemId: Int,

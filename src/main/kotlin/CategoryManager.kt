@@ -1,8 +1,8 @@
-import model.CategoryItem
+import model.CategoryInfo
 
-class Category(private val categories: ArrayList<CategoryItem>) {
+class CategoryManager(private val categories: ArrayList<CategoryInfo>) {
 
-    fun getCategoryItem(categoryId: Int): CategoryItem? {
+    fun getCategoryItem(categoryId: Int): CategoryInfo? {
         return categories.find { it.categoryId == categoryId }
     }
 

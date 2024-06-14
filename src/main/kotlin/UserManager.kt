@@ -1,15 +1,15 @@
-import model.UserItem
+import model.UserInfo
 
-class User {
+class UserManager {
 
-    private val userList = mutableListOf<UserItem>()
-    private var currenUser: UserItem? = null
+    private val userList = mutableListOf<UserInfo>()
+    private var currenUser: UserInfo? = null
 
-    fun saveUserInfo(user: UserItem) {
+    fun saveUserInfo(user: UserInfo) {
         userList.add(user)
     }
 
-    fun setCurrentUser(userId: Int): UserItem {
+    fun setCurrentUser(userId: Int): UserInfo {
         currenUser = userList.find { it.userId == userId }
         return currenUser!!
     }
@@ -18,7 +18,7 @@ class User {
         return userList.isEmpty()
     }
 
-    fun getCurrentUser(): UserItem? {
+    fun getCurrentUser(): UserInfo? {
         return currenUser
     }
 

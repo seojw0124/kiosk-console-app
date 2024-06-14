@@ -1,6 +1,6 @@
-import model.CategoryItem
+import model.CategoryInfo
 
-class Menu(list: ArrayList<MenuItem>) {
+class MenuManager(list: ArrayList<MenuItem>) {
 
     private val drinks = list.filter { it.categoryId == 1 }
     private val foods = list.filter { it.categoryId == 2 }
@@ -22,7 +22,7 @@ class Menu(list: ArrayList<MenuItem>) {
         }
     }
 
-    fun showDetailMenu(category: CategoryItem) {
+    fun showDetailMenu(category: CategoryInfo) {
         println("""
             
             ====================================

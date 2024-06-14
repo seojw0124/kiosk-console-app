@@ -1,12 +1,12 @@
-import model.CartItem
+import model.CartInfo
 import utils.KoreanUtil
 import java.text.DecimalFormat
 
-class Cart {
+class CartManager {
 
-    private val cartList = mutableListOf<CartItem>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
+    private val cartList = mutableListOf<CartInfo>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
 
-    fun addCartItem(item: CartItem, categoryId: Int) {
+    fun addCartItem(item: CartInfo, categoryId: Int) {
         cartList.add(item)
 
         val word = if (categoryId == 1) {
