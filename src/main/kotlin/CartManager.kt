@@ -27,32 +27,62 @@ class CartManager {
         return cart.isEmpty()
     }
 
-    fun getMyCartItemList(userId: Int): List<CartInfo> {
-        return cart.filter { it.userId == userId }
+    fun getMyCartItemList(): List<CartInfo> {
+        return cart
     }
 
     fun clearMyCart() {
         cart.clear()
     }
 
-    fun showMyCart(user: UserInfo) {
+    fun showMyCart(money: Int) {
         var totalPrice = 0
 
-        println("""
+        println(
+            """
             ====================================
                         << 장바구니 >>
-        """.trimIndent())
+        """.trimIndent()
+        )
         cart.forEach {
             totalPrice += it.price * it.quantity
             println("${it.cartId}. ${it.itemName} x ${it.quantity} ............. ${FormatUtil().decimalFormat(it.price * it.quantity)}원")
         }
-        println("""
+        println(
+            """
             
             총액: ${FormatUtil().decimalFormat(totalPrice)}원
-            소지금: ${FormatUtil().decimalFormat(user.money)}원
+            소지금: ${FormatUtil().decimalFormat(money)}원
             
             1. 결제하기    0. 뒤로가기
             ====================================
-        """.trimIndent())
+        """.trimIndent()
+        )
+    }
+
+    fun showReceipt(orderItem: List<CartInfo>, orderDate: String) {
+        var totalPrice = 0
+
+        println(
+            """
+            ====================================
+                        << 주문 내역 >>
+            결제일: $orderDate
+            
+        """.trimIndent()
+        )
+        orderItem.forEach {
+            totalPrice += it.price * it.quantity
+            println("${it.itemName} x ${it.quantity} ................ ${FormatUtil().decimalFormat(it.price * it.quantity)}원")
+        }
+        println(
+            """
+            
+            총액: ${FormatUtil().decimalFormat(totalPrice)}원
+            
+            0. 뒤로가기
+            ====================================
+        """.trimIndent()
+        )
     }
 }
