@@ -24,6 +24,7 @@ class Menu(list: ArrayList<AbstractMenu>) {
 
     fun showDetailMenu(category: CategoryItem) {
         println("""
+            
             ====================================
                        << ${category.categoryName} 메뉴 >>
         """.trimIndent())

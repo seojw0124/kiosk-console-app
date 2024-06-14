@@ -14,12 +14,12 @@ class User {
         return currenUser!!
     }
 
-    fun getAllUserList(): MutableList<UserItem> {
-        return userList
-    }
-
     fun isUserListEmpty(): Boolean {
         return userList.isEmpty()
+    }
+
+    fun getCurrentUser(): UserItem? {
+        return currenUser
     }
 
     fun getCurrentUserId(): Int {
@@ -30,7 +30,7 @@ class User {
         return currenUser?.userName ?: ""
     }
 
-    fun getLastCurrentUserId(): Int {
+    fun getLastUserId(): Int {
         return userList.last().userId
     }
 }

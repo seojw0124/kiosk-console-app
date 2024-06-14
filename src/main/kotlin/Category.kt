@@ -13,7 +13,7 @@ class Category(private val categories: ArrayList<CategoryItem>) {
     fun showCategory() {
         println("""
             ====================================
-                       << 카페 메뉴 >>
+                       << 정우 카페 >>
         """.trimIndent())
         categories.forEach {
             if (it.categoryId == 8) println()

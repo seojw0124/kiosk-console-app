@@ -28,11 +28,13 @@ private fun login(user: User) {
         if (user.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
             1
         } else {
-            user.getLastCurrentUserId() + 1
+            user.getLastUserId() + 1
         }
     user.saveUserInfo(UserItem(userId, userName as String, money as Int))
     currentUser = user.setCurrentUser(userId)
+    println()
     println("${currentUser.userName} 님 <정우 카페>에 오신 것을 환영합니다!!!")
+    println()
 }
 
 private fun inputMyInfo(type: String): Any? {
