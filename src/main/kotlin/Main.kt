@@ -24,7 +24,8 @@ private fun login(user: User) {
     val userName = inputMyInfo("name")
     val money = inputMyInfo("money")
 
-    val userId = if (user.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
+    val userId =
+        if (user.isUserListEmpty()) { // 질문) user.userList.isEmpty()로 하면 안되나요? (userList가 public으로 바꿔도 되나요?)
             1
         } else {
             user.getLastCurrentUserId() + 1
@@ -38,30 +39,30 @@ private fun inputMyInfo(type: String): Any? {
     return when (type) {
         "name" -> {
             println("이름을 입력해주세요.")
-            while(true) {
+            while (true) {
                 try {
-                    val originName = readLine()
-                    if(originName?.first() != '_' && originName?.first() != '!') {
+                    val originName = readln()
+                    if (originName.first() != '_' && originName.first() != '!') { // orginName.first() 가 NoSuchElementException 발생 -> 이름 입력 안하면 catch로 넘어감
                         return originName
                     } else {
-                        println("이름을 다시 입력해주세요")
+                        println("이름을 다시 입력해주세요.")
                     }
-                } catch(e:Exception) {
-                    println("이름을 다시 입력해주세요")
+                } catch (e:Exception) {
+                    println("이름을 다시 입력해주세요.")
                 }
             }
         }
         "money" -> {
             println("소지하고 계신 금액을 입력해주세요.")
-            while(true) {
+            while (true) {
                 try {
                     val originMoney = readInt()
-                    if(originMoney > 0) {
+                    if (originMoney > 0) {
                         return originMoney
                     } else {
                         println("소지하고 계신 금액을 다시 입력해주세요")
                     }
-                } catch(e:Exception) {
+                } catch (e:Exception) {
                     println("소지하고 계신 금액을 다시 입력해주세요")
                 }
             }
@@ -76,40 +77,53 @@ private fun runKiosk(
     cart: Cart,
     order: Order
 ) {
-    while (true) {
-        categories.showCategory()
-        val categoryId = readInt()
+    var isExitKiosk = false
 
-        when (categoryId) {
-            in 1..categories.getItemCount() -> {
-                showDetailMenuByCategory(categories, categoryId, menu, cart)
-            }
-            8 -> {
-                cart.showMyCartList()
-                print("메뉴를 선택하세요: ")
-                val selectedCartMenu = readInt()
-                when (selectedCartMenu) {
-                    1 -> {
-                        println("결제가 완료되었습니다.")
-                        break
+    while (!isExitKiosk) {
+        categories.showCategory()
+        var isSelectedCategory = false
+
+        while (!isSelectedCategory) {
+            try {
+                val categoryId = readInt()
+                when (categoryId) {
+                    in 1..categories.getItemCount() -> {
+                        showDetailMenuByCategory(categories, categoryId, menu, cart)
+                        isSelectedCategory = true
+                    }
+                    8 -> {
+                        cart.showMyCartList()
+                        print("메뉴를 선택하세요: ")
+                        val selectedCartMenu = readInt()
+                        when (selectedCartMenu) {
+                            1 -> {
+                                println("결제가 완료되었습니다.")
+                                isSelectedCategory = true
+                                break
+                            }
+                            0 -> {
+                                isSelectedCategory = true
+                                break
+                            }
+                            else -> {
+                                println("없는 번호입니다. 다시 입력해주세요.")
+                            }
+                        }
+                    }
+                    9 -> {
+                        order.showMyOrderList(currentUser.userId)
                     }
                     0 -> {
-                        continue
+                        isExitKiosk = true // 외부 루프를 종료하도록 설정
+                        isSelectedCategory = true // 내부 루프를 종료하도록 설정
+                        break
                     }
                     else -> {
-                        println("없는 번호입니다. 다시 입력해주세요.")
+                        throw IndexOutOfBoundsException()
                     }
                 }
-            }
-            9 -> {
-                order.showMyOrderList(currentUser.userId)
-
-            }
-            0 -> {
-                break
-            }
-            else -> {
-                println("없는 카테고리입니다. 다시 입력해주세요.")
+            } catch (e:Exception) {
+                print("없는 카테고리입니다. 다시 입력해주세요. 카테고리: ")
             }
         }
     }
@@ -124,45 +138,67 @@ private fun showDetailMenuByCategory(categories: Category, categoryId: Int, menu
 }
 
 private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
-    while (true) {
-        print("메뉴를 선택하세요(0: 뒤로가기): ")
-        val itemId = readInt()
+    var isExitMenu = false
 
-        when (itemId) {
-            in 1..menu.getMenuItemCount(categoryId) -> {
-                val item = menu.getMenuItem(categoryId, itemId)
-                item?.let {
-                    item.displayInfo()
-                    val quantity = getQuantity()
-                    checkAddMenuItemToCart(cart, item, quantity)
+    while (!isExitMenu) {
+        print("메뉴를 선택하세요(0: 뒤로가기): ")
+        var isSelectedMenu = false
+
+        while (!isSelectedMenu) {
+            try {
+                val itemId = readInt()
+                when (itemId) {
+                    in 1..menu.getMenuItemCount(categoryId) -> {
+                        val item = menu.getMenuItem(categoryId, itemId)
+                        item?.let {
+                            isSelectedMenu = true
+                            item.displayInfo()
+                            val quantity = getQuantity()
+                            checkAddMenuItemToCart(cart, item, quantity)
+                        }
+                    }
+                    0 -> {
+                        isExitMenu = true
+                        break
+                    }
+                    else -> {
+                        throw IndexOutOfBoundsException()
+                    }
                 }
-            }
-            0 -> {
-                break
-            }
-            else -> {
-                println("없는 메뉴입니다. 다시 입력해주세요.")
+            } catch (e:Exception) {
+                print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
             }
         }
     }
 }
 
 private fun checkAddMenuItemToCart(cart: Cart, item: AbstractMenu, quantity: Int) {
-    while (true) {
-        print("장바구니에 담으시겠습니까? (y/n): ")
-        val answer = readln().lowercase()
+    var isCancelAddToCart = false
 
-        when (answer) {
-            "y" -> {
-                addItemToCart(item, quantity, cart)
-                break
-            }
-            "n" -> {
-                println("장바구니에 담기를 취소했습니다.")
-                break
-            }
-            else -> {
-                println("잘못된 입력입니다. 다시 입력해주세요.")
+    while (!isCancelAddToCart) {
+        print("장바구니에 담으시겠습니까? (y/n): ")
+
+        while (true) {
+            try {
+                val answer = readln().lowercase()
+                when (answer) {
+                    "y" -> {
+                        addItemToCart(item, quantity, cart)
+                        isCancelAddToCart = true
+                        break
+                    }
+                    "n" -> {
+                        println("장바구니에 담기를 취소했습니다.")
+                        isCancelAddToCart = true
+                        break
+                    }
+                    else -> {
+                        // y, n 이외의 값이 입력되었을 때 예외처리
+                        throw Exception()
+                    }
+                }
+            } catch (e:Exception) {
+                print("잘못된 입력입니다. 다시 입력해주세요: ")
             }
         }
     }
@@ -173,7 +209,8 @@ private fun addItemToCart(item: AbstractMenu, quantity: Int, cart: Cart) {
         println("소지금이 부족합니다. 다른 상품을 선택해주세요.")
         return
     }
-    val cartId = if (cart.isCartListEmpty()) {
+    val cartId =
+        if (cart.isCartListEmpty()) {
         1
     } else {
         cart.getLastCartItemId() + 1
