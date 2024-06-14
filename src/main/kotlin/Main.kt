@@ -154,7 +154,7 @@ private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
                         val item = menu.getMenuItem(categoryId, itemId)
                         item?.let {
                             isSelectedMenu = true
-                            item.displayInfo()
+                            item.displayDetailInfo()
                             val quantity = getQuantity()
                             checkAddMenuItemToCart(cart, item, quantity)
                         }
@@ -174,7 +174,7 @@ private fun selectMenuItem(menu: Menu, categoryId: Int, cart: Cart) {
     }
 }
 
-private fun checkAddMenuItemToCart(cart: Cart, item: AbstractMenu, quantity: Int) {
+private fun checkAddMenuItemToCart(cart: Cart, item: MenuItem, quantity: Int) {
     var isCancelAddToCart = false
 
     while (!isCancelAddToCart) {
@@ -206,7 +206,7 @@ private fun checkAddMenuItemToCart(cart: Cart, item: AbstractMenu, quantity: Int
     }
 }
 
-private fun addItemToCart(item: AbstractMenu, quantity: Int, cart: Cart) {
+private fun addItemToCart(item: MenuItem, quantity: Int, cart: Cart) {
     if (currentUser.money < item.price * quantity) {
         println("소지금이 부족합니다. 다른 상품을 선택해주세요.")
         return
@@ -251,7 +251,7 @@ fun initCategoryData(): ArrayList<CategoryItem> {
     )
 }
 
-fun initMenuData(): ArrayList<AbstractMenu> {
+fun initMenuData(): ArrayList<MenuItem> {
     return arrayListOf(
         Drink(1, 1, "아메리카노", 4500),
         Drink(2, 1, "카페라떼", 5500),

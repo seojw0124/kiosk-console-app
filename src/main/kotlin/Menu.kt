@@ -1,12 +1,12 @@
 import model.CategoryItem
 
-class Menu(list: ArrayList<AbstractMenu>) {
+class Menu(list: ArrayList<MenuItem>) {
 
     private val drinks = list.filter { it.categoryId == 1 }
     private val foods = list.filter { it.categoryId == 2 }
     private val products = list.filter { it.categoryId == 3 }
 
-    fun getMenuItem(categoryId: Int, itemId: Int): AbstractMenu? {
+    fun getMenuItem(categoryId: Int, itemId: Int): MenuItem? {
         return when (categoryId) {
             1 -> drinks.find { it.itemId == itemId }
             2 -> foods.find { it.itemId == itemId }
@@ -29,9 +29,9 @@ class Menu(list: ArrayList<AbstractMenu>) {
                        << ${category.categoryName} 메뉴 >>
         """.trimIndent())
         when (category.categoryId) {
-            1 -> drinks.forEach { it.displayInfo() }
-            2 -> foods.forEach { it.displayInfo() }
-            3 -> products.forEach { it.displayInfo() }
+            1 -> drinks.forEach { it.displaySimpleInfo() }
+            2 -> foods.forEach { it.displaySimpleInfo() }
+            3 -> products.forEach { it.displaySimpleInfo() }
         }
         println("""
             
