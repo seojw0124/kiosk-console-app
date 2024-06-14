@@ -2,6 +2,8 @@ import model.CartInfo
 import model.CategoryInfo
 import model.OrderInfo
 import model.UserInfo
+import utils.FormatUtil
+import java.time.LocalDateTime
 
 fun main() {
 
@@ -52,7 +54,7 @@ private fun inputMyInfo(type: String): Any? {
                     } else {
                         println("이름을 다시 입력해주세요.")
                     }
-                } catch (e:Exception) {
+                } catch (e: Exception) {
                     println("이름을 다시 입력해주세요.")
                 }
             }
@@ -67,7 +69,7 @@ private fun inputMyInfo(type: String): Any? {
                     } else {
                         println("소지하고 계신 금액을 다시 입력해주세요")
                     }
-                } catch (e:Exception) {
+                } catch (e: Exception) {
                     println("소지하고 계신 금액을 다시 입력해주세요")
                 }
             }
@@ -98,7 +100,7 @@ private fun runKiosk(
                         isSelectedCategory = true
                     }
                     8 -> {
-                        cartManager.showMyCartList()
+                        cartManager.showMyCart(currentUser)
                         print("메뉴를 선택하세요: ")
                         val selectedCartMenu = readInt()
                         when (selectedCartMenu) {
@@ -121,33 +123,11 @@ private fun runKiosk(
                     }
                     else -> throw IndexOutOfBoundsException()
                 }
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 print("없는 카테고리입니다. 다시 입력해주세요. 카테고리: ")
             }
         }
     }
-}
-
-fun addCartItemToOrder(currentUser: UserInfo, cartManager: CartManager, orderManager: OrderManager) {
-    val cartItemList = cartManager.getMyCartItemList(currentUser.userId)
-    println("cartItemList: $cartItemList")
-    val orderId =
-        if (orderManager.isOrderListEmpty()) {
-            1
-        } else {
-            orderManager.getLastOrderItemId() + 1
-        }
-
-    val orderItem = OrderInfo(
-        orderId,
-        currentUser.userId,
-        currentUser.userName,
-        cartItemList,
-        "2024-06-14"
-    )
-    orderManager.addOrderItem(orderItem)
-    cartManager.clearMyCartList()
-    println("결제가 완료되었습니다.")
 }
 
 private fun showDetailMenuByCategory(currentUser: UserInfo, categoryManager: CategoryManager, categoryId: Int, menuManager: MenuManager, cartManager: CartManager) {
@@ -158,6 +138,7 @@ private fun showDetailMenuByCategory(currentUser: UserInfo, categoryManager: Cat
     }
 }
 
+/* 메뉴 골라서 장바구니 기능 */
 private fun selectMenuItem(currentUser: UserInfo, menuManager: MenuManager, categoryId: Int, cartManager: CartManager) {
     var isExitMenu = false
 
@@ -184,7 +165,7 @@ private fun selectMenuItem(currentUser: UserInfo, menuManager: MenuManager, cate
                     }
                     else -> throw IndexOutOfBoundsException()
                 }
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
             }
         }
@@ -213,7 +194,7 @@ private fun checkAddMenuItemToCart(currentUser: UserInfo, cartManager: CartManag
                     }
                     else -> throw Exception()
                 }
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 print("잘못된 입력입니다. 다시 입력해주세요: ")
             }
         }
@@ -222,7 +203,7 @@ private fun checkAddMenuItemToCart(currentUser: UserInfo, cartManager: CartManag
 
 private fun addItemToCart(currentUser: UserInfo, item: MenuItem, quantity: Int, cartManager: CartManager) {
     if (currentUser.money < item.price * quantity) {
-        println("소지금이 부족합니다. 다른 상품을 선택해주세요.")
+        println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(currentUser.money)}원")
         return
     }
     val cartId =
@@ -256,6 +237,34 @@ private fun getQuantity(): Int {
     }
 }
 
+/* 결제하기 */
+fun addCartItemToOrder(currentUser: UserInfo, cartManager: CartManager, orderManager: OrderManager) {
+    val cartItemList = cartManager.getMyCartItemList(currentUser.userId)
+    println("cartItemList: $cartItemList")
+    val orderId =
+        if (orderManager.isOrderListEmpty()) {
+            1
+        } else {
+            orderManager.getLastOrderItemId() + 1
+        }
+
+    // 주문 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
+    val localDateTime = LocalDateTime.now().toString()
+    val orderDate = FormatUtil().getFormattedDate(localDateTime)
+
+    val orderItem = OrderInfo(
+        orderId,
+        currentUser.userId,
+        currentUser.userName,
+        cartItemList,
+        orderDate
+    )
+    orderManager.addOrderItem(orderItem)
+    cartManager.clearMyCart()
+    println("결제가 완료되었습니다.")
+}
+
+/* 데이터 초기화 */
 fun initCategoryData(): ArrayList<CategoryInfo> {
     return arrayListOf(
         CategoryInfo(1, "음료"),

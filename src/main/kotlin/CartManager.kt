@@ -1,14 +1,15 @@
 import model.CartInfo
 import model.UserInfo
+import utils.FormatUtil
 import utils.KoreanUtil
 import java.text.DecimalFormat
 
 class CartManager {
 
-    private val cartList = mutableListOf<CartInfo>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
+    private val cart = mutableListOf<CartInfo>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
 
     fun addCartItem(item: CartInfo, categoryId: Int) {
-        cartList.add(item)
+        cart.add(item)
 
         val word = if (categoryId == 1) {
             "잔"
@@ -19,36 +20,36 @@ class CartManager {
     }
 
     fun getLastCartItemId(): Int {
-        return cartList.last().cartId
+        return cart.last().cartId
     }
 
     fun isCartEmpty(): Boolean {
-        return cartList.isEmpty()
+        return cart.isEmpty()
     }
 
     fun getMyCartItemList(userId: Int): List<CartInfo> {
-        return cartList.filter { it.userId == userId }
+        return cart.filter { it.userId == userId }
     }
 
-    fun clearMyCartList() {
-        cartList.clear()
+    fun clearMyCart() {
+        cart.clear()
     }
 
-    fun showMyCartList() {
+    fun showMyCart(user: UserInfo) {
         var totalPrice = 0
-        val decimalFormat = DecimalFormat("#,###")
 
         println("""
             ====================================
                         << 장바구니 >>
         """.trimIndent())
-        cartList.forEach {
+        cart.forEach {
             totalPrice += it.price * it.quantity
-            println("${it.itemName} x ${it.quantity} ................ ${decimalFormat.format(it.price * it.quantity)}원")
+            println("${it.cartId}. ${it.itemName} x ${it.quantity} ............. ${FormatUtil().decimalFormat(it.price * it.quantity)}원")
         }
         println("""
             
-            총액: ${decimalFormat.format(totalPrice)}원
+            총액: ${FormatUtil().decimalFormat(totalPrice)}원
+            소지금: ${FormatUtil().decimalFormat(user.money)}원
             
             1. 결제하기    0. 뒤로가기
             ====================================
