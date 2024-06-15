@@ -46,20 +46,16 @@ class Kiosk {
     }
 
     private fun runKiosk() {
-        var isExitKiosk = false
-
         while (true) {
             globalManager.categoryManager.showCategory()
             val selectedCategoryId = getSelectedCategoryId()
 
             if (selectedCategoryId == 0) {
-                isExitKiosk = true
                 break
             } else if (selectedCategoryId == 8) {
                 handleCart()
                 continue
             }
-
             handleMenu(selectedCategoryId)
         }
     }
@@ -81,8 +77,6 @@ class Kiosk {
     }
 
     private fun handleMenu(categoryId: Int) {
-        var isExitMenu = false
-
         while (true) {
             globalManager.menuManager.showDetailMenu(categoryId)
             print("메뉴를 선택하세요(0: 뒤로가기): ")
@@ -91,7 +85,6 @@ class Kiosk {
 
             val item = globalManager.menuManager.getMenuItem(categoryId, itemId)
             item?.let {
-                isExitMenu = true
                 it.displayDetailInfo()
                 val quantity = getQuantity()
                 addItemToCart(it, quantity)
@@ -116,48 +109,40 @@ class Kiosk {
     }
 
     private fun addItemToCart(item: MenuItem, quantity: Int) {
-        var isCancelAddToCart = false
+        if (money < item.price * quantity) {
+            println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(money)}원")
+        }
 
-        while (!isCancelAddToCart) {
-            if (money < item.price * quantity) {
-                println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(money)}원")
-            }
-
-            print("장바구니에 담으시겠습니까? (y/n): ")
-            while (true) {
-                try {
-                    val answer = readln().lowercase()
-                    when (answer) {
-                        "y" -> {
-                            val cartId =
-                                if (globalManager.cartManager.isCartEmpty()) {
-                                    1
-                                } else {
-                                    globalManager.cartManager.getLastCartItemId() + 1
-                                }
-                            val cartInfo = CartInfo(
-                                cartId,
-                                item.itemId,
-                                item.name,
-                                item.price,
-                                quantity
-                            )
-                            globalManager.cartManager.addCartItem(cartInfo, item.categoryId)
-                            isCancelAddToCart = true
-                            break
-                        }
-
-                        "n" -> {
-                            println("장바구니에 담기를 취소했습니다.")
-                            isCancelAddToCart = true
-                            break
-                        }
-
-                        else -> throw Exception()
+        print("장바구니에 담으시겠습니까? (y/n): ")
+        while (true) {
+            try {
+                val answer = readln().lowercase()
+                when (answer) {
+                    "y" -> {
+                        val cartId =
+                            if (globalManager.cartManager.isCartEmpty()) {
+                                1
+                            } else {
+                                globalManager.cartManager.getLastCartItemId() + 1
+                            }
+                        val cartInfo = CartInfo(
+                            cartId,
+                            item.itemId,
+                            item.name,
+                            item.price,
+                            quantity
+                        )
+                        globalManager.cartManager.addCartItem(cartInfo, item.categoryId)
+                        break
                     }
-                } catch (e: Exception) {
-                    print("잘못된 입력입니다. 다시 입력해주세요: ")
+                    "n" -> {
+                        println("장바구니에 담기를 취소했습니다.")
+                        break
+                    }
+                    else -> throw Exception()
                 }
+            } catch (e: Exception) {
+                print("잘못된 입력입니다. 다시 입력해주세요(y/n): ")
             }
         }
     }
