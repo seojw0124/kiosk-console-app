@@ -7,6 +7,7 @@ import java.text.DecimalFormat
 class CartManager {
 
     private val cart = mutableListOf<CartInfo>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
+    private var totalPrice = 0
 
     fun addCartItem(item: CartInfo, categoryId: Int) {
         cart.add(item)
@@ -35,9 +36,14 @@ class CartManager {
         cart.clear()
     }
 
-    fun showMyCart(money: Int) {
-        var totalPrice = 0
+    fun getCartItemTotalPrice(): Int {
+        cart.forEach {
+            totalPrice += it.price * it.quantity
+        }
+        return totalPrice
+    }
 
+    fun showMyCart(money: Int) {
         println(
             """
             ====================================
@@ -52,7 +58,7 @@ class CartManager {
             """
             
             총액: ${FormatUtil().decimalFormat(totalPrice)}원
-            소지금: ${FormatUtil().decimalFormat(money)}원
+            잔액: ${FormatUtil().decimalFormat(money)}원
             
             1. 결제하기    0. 뒤로가기
             ====================================

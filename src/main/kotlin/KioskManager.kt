@@ -35,9 +35,9 @@ class KioskManager {
                 if (originMoney > 0) {
                     return originMoney
                 } else {
-                    throw Exception()
+                    throw IllegalArgumentException()
                 }
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
                 println("소지하고 계신 금액을 다시 입력해주세요")
             }
         }
@@ -108,7 +108,7 @@ class KioskManager {
 
     private fun addItemToCart(item: MenuItem, quantity: Int) {
         if (money < item.price * quantity) {
-            println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(money)}원")
+            println("잔액이 부족합니다. 다른 상품을 선택해주세요. 현재 잔액: ${FormatUtil().decimalFormat(money)}원")
             return
         }
 
@@ -159,8 +159,17 @@ class KioskManager {
     }
 
     private fun orderCartItem() {
+        if (globalManager.cartManager.isCartEmpty()) {
+            println("장바구니가 비어있습니다. 상품을 추가해주세요.")
+            return
+        }
+
+        if (money < globalManager.cartManager.getCartItemTotalPrice()) {
+            println("현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(globalManager.cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.")
+            return
+        }
+
         val cartItemList = globalManager.cartManager.getMyCartItemList()
-        println("cartItemList: $cartItemList")
         val orderId =
             if (globalManager.orderManager.isOrderListEmpty()) {
                 1
