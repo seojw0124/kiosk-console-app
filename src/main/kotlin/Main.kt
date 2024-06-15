@@ -29,7 +29,7 @@ class Kiosk {
         globalManager = GlobalManager(categoryManager, menuManager, cartManager, orderManager)
     }
 
-    fun inputMoney(): Int {
+    private fun inputMoney(): Int {
         println("소지하고 계신 금액을 입력해주세요.")
         while (true) {
             try {
@@ -111,6 +111,7 @@ class Kiosk {
     private fun addItemToCart(item: MenuItem, quantity: Int) {
         if (money < item.price * quantity) {
             println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(money)}원")
+            return
         }
 
         print("장바구니에 담으시겠습니까? (y/n): ")
@@ -190,6 +191,36 @@ class Kiosk {
             }
         }
     }
+
+    /* 데이터 초기화 */
+    private fun initCategoryData(): ArrayList<CategoryInfo> {
+        return arrayListOf(
+            CategoryInfo(1, "음료"),
+            CategoryInfo(2, "푸드"),
+            CategoryInfo(3, "상품"),
+            CategoryInfo(8, "장바구니"),
+            CategoryInfo(9, "결제목록")
+        )
+    }
+
+    private fun initMenuData(): ArrayList<MenuItem> {
+        return arrayListOf(
+            Drink(1, 1, "아메리카노", 4500),
+            Drink(2, 1, "카페라떼", 5500),
+            Drink(3, 1, "카푸치노", 5000),
+            Food(1, 2, "카스테라", 4500),
+            Food(2, 2, "케이크", 5700),
+            Food(3, 2, "마카롱", 2700),
+            Product(1, 3, "머그컵", 14000),
+            Product(2, 3, "텀블러", 25000),
+            Product(3, 3, "원두", 18000)
+        )
+    }
+
+    private fun readInt(): Int {
+        return readln().toIntOrNull() ?: 0
+    }
+
 }
 
 fun main() {
