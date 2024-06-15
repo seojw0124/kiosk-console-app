@@ -44,40 +44,4 @@ class MenuManager(list: ArrayList<MenuItem>) {
             ====================================
         """.trimIndent())
     }
-
-    fun getMenuNumber(categoryId: Int): Int? {
-        var isExitMenu = false
-
-        var selectedMenuNumber: Int? = null
-
-        while (!isExitMenu) {
-            showDetailMenu(categoryId)
-
-            print("메뉴를 선택하세요(0: 뒤로가기): ")
-            var isSelectedMenu = false
-
-            while (!isSelectedMenu) {
-                try {
-                    val itemId = readInt()
-                    when (itemId) {
-                        in 1..getMenuItemCount(categoryId) -> {
-                            isSelectedMenu = true
-                            selectedMenuNumber = itemId
-                        }
-                        0 -> {
-                            isExitMenu = true
-                            selectedMenuNumber = 0
-                            break
-                        }
-                        else -> throw IndexOutOfBoundsException()
-                    }
-                } catch (e: Exception) {
-                    print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
-                    selectedMenuNumber = null
-                }
-            }
-            return selectedMenuNumber
-        }
-        return selectedMenuNumber
-    }
 }

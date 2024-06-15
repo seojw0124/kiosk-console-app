@@ -3,6 +3,7 @@ import model.CategoryInfo
 import model.OrderInfo
 import utils.FormatUtil
 import java.time.LocalDateTime
+import kotlin.system.exitProcess
 
 class KioskManager {
     private lateinit var globalManager: GlobalManager
@@ -167,14 +168,26 @@ class KioskManager {
                 globalManager.orderManager.getLastOrderItemId() + 1
             }
 
-        // 주문 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
+        // 결제 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
         val localDateTime = LocalDateTime.now().toString()
         val orderDate = FormatUtil().getFormattedDate(localDateTime)
         val orderItem = OrderInfo(orderId, cartItemList, orderDate)
 
         globalManager.orderManager.addOrderItem(orderItem) // 나중에 cartManager에서 영수증 출력하기로 바꾸기
-        globalManager.cartManager.clearMyCart()
-        println("결제가 완료되었습니다.")
+
+        println(orderItem)
+
+        print("결제가 완료되었습니다. 영수증을 출력하시겠습니까? (y/n): ")
+        val answer = readln().lowercase()
+        if (answer == "y") {
+            globalManager.orderManager.showReceipt()
+            globalManager.cartManager.clearMyCart()
+        } else {
+            println("주문번호: $orderId")
+        }
+
+        println("프로그램을 종료합니다.")
+        exitProcess(0)
     }
 
     private fun getQuantity(): Int {

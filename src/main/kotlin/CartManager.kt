@@ -59,30 +59,4 @@ class CartManager {
         """.trimIndent()
         )
     }
-
-    fun showReceipt(orderItem: List<CartInfo>, orderDate: String) {
-        var totalPrice = 0
-
-        println(
-            """
-            ====================================
-                        << 주문 내역 >>
-            결제일: $orderDate
-            
-        """.trimIndent()
-        )
-        orderItem.forEach {
-            totalPrice += it.price * it.quantity
-            println("${it.itemName} x ${it.quantity} ................ ${FormatUtil().decimalFormat(it.price * it.quantity)}원")
-        }
-        println(
-            """
-            
-            총액: ${FormatUtil().decimalFormat(totalPrice)}원
-            
-            0. 뒤로가기
-            ====================================
-        """.trimIndent()
-        )
-    }
 }
