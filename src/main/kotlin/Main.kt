@@ -56,7 +56,80 @@ private fun runKiosk(
                 val categoryId = readInt()
                 when (categoryId) {
                     in 1..globalManager.categoryManager.getItemCount() -> {
-                        showDetailMenuByCategory(globalManager, categoryId)
+                        var isExitMenu = false
+
+                        while (!isExitMenu) {
+                            globalManager.menuManager.showDetailMenu(categoryId)
+
+                            print("메뉴를 선택하세요(0: 뒤로가기): ")
+                            var isSelectedMenu = false
+
+                            while (!isSelectedMenu) {
+                                try {
+                                    val itemId = readInt()
+                                    when (itemId) {
+                                        in 1..globalManager.menuManager.getMenuItemCount(categoryId) -> {
+                                            val item = globalManager.menuManager.getMenuItem(categoryId, itemId)
+                                            item?.let {
+                                                isSelectedMenu = true
+                                                item.displayDetailInfo()
+                                                val quantity = getQuantity()
+                                                var isCancelAddToCart = false
+
+                                                while (!isCancelAddToCart) {
+                                                    print("장바구니에 담으시겠습니까? (y/n): ")
+
+                                                    while (true) {
+                                                        try {
+                                                            val answer = readln().lowercase()
+                                                            when (answer) {
+                                                                "y" -> {
+                                                                    if (money < item.price * quantity) {
+                                                                        println("소지금이 부족합니다. 다른 상품을 선택해주세요. 현재 소지금: ${FormatUtil().decimalFormat(money)}원")
+                                                                        return
+                                                                    }
+                                                                    val cartId =
+                                                                        if (globalManager.cartManager.isCartEmpty()) {
+                                                                            1
+                                                                        } else {
+                                                                            globalManager.cartManager.getLastCartItemId() + 1
+                                                                        }
+                                                                    val cartInfo = CartInfo(
+                                                                        cartId,
+                                                                        item.itemId,
+                                                                        item.name,
+                                                                        item.price,
+                                                                        quantity
+                                                                    )
+                                                                    globalManager.cartManager.addCartItem(cartInfo, item.categoryId)
+                                                                    isCancelAddToCart = true
+                                                                    break
+                                                                }
+                                                                "n" -> {
+                                                                    println("장바구니에 담기를 취소했습니다.")
+                                                                    isCancelAddToCart = true
+                                                                    break
+                                                                }
+                                                                else -> throw Exception()
+                                                            }
+                                                        } catch (e: Exception) {
+                                                            print("잘못된 입력입니다. 다시 입력해주세요: ")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        0 -> {
+                                            isExitMenu = true
+                                            break
+                                        }
+                                        else -> throw IndexOutOfBoundsException()
+                                    }
+                                } catch (e: Exception) {
+                                    print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
+                                }
+                            }
+                        }
                         isSelectedCategory = true
                     }
                     8 -> {
@@ -66,7 +139,27 @@ private fun runKiosk(
                         when (selectedCartMenu) {
                             1 -> {
                                 isSelectedCategory = true
-                                addCartItemToOrder(globalManager)
+                                val cartItemList = globalManager.cartManager.getMyCartItemList()
+                                println("cartItemList: $cartItemList")
+                                val orderId =
+                                    if (globalManager.orderManager.isOrderListEmpty()) {
+                                        1
+                                    } else {
+                                        globalManager.orderManager.getLastOrderItemId() + 1
+                                    }
+
+                                // 주문 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
+                                val localDateTime = LocalDateTime.now().toString()
+                                val orderDate = FormatUtil().getFormattedDate(localDateTime)
+
+                                val orderItem = OrderInfo(
+                                    orderId,
+                                    cartItemList,
+                                    orderDate
+                                )
+                                globalManager.orderManager.addOrderItem(orderItem)
+                                globalManager.cartManager.clearMyCart()
+                                println("결제가 완료되었습니다.")
                             }
                             0 -> {
                                 isSelectedCategory = true
@@ -95,7 +188,7 @@ private fun showDetailMenuByCategory(globalManager: GlobalManager, categoryId: I
         var isExitMenu = false
 
         while (!isExitMenu) {
-            globalManager.menuManager.showDetailMenu(it)
+            globalManager.menuManager.showDetailMenu(it.categoryId)
 
             print("메뉴를 선택하세요(0: 뒤로가기): ")
             var isSelectedMenu = false
