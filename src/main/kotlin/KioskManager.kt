@@ -191,7 +191,7 @@ class KioskManager {
             orderManager.showReceipt()
             cartManager.clearMyCart()
         } else {
-            println("주문번호: $orderId")
+            println("\n주문번호: $orderId\n")
         }
 
         println("프로그램을 종료합니다.")

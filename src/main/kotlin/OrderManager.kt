@@ -21,6 +21,7 @@ class OrderManager {
     }
 
     fun showReceipt() {
+        totalPrice = 0
         println(
             """
         ====================================

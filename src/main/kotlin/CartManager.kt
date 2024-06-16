@@ -10,7 +10,12 @@ class CartManager {
     private var totalPrice = 0
 
     fun addCartItem(item: CartInfo, categoryId: Int) {
-        cart.add(item)
+        val sameCartItem = cart.find { it.itemName == item.itemName }
+        if (sameCartItem != null) {
+            sameCartItem.quantity += item.quantity
+        } else {
+            cart.add(item)
+        }
 
         val word = if (categoryId == 1) {
             "잔"
@@ -18,6 +23,7 @@ class CartManager {
             "개"
         }
         println("${item.itemName} ${item.quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
+        println(cart)
     }
 
     fun getLastCartItemId(): Int {
@@ -44,6 +50,7 @@ class CartManager {
     }
 
     fun showMyCart(money: Int) {
+        totalPrice = 0
         println(
             """
             ====================================
