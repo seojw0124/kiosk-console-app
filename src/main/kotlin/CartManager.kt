@@ -1,8 +1,6 @@
 import model.CartInfo
-import model.UserInfo
 import utils.FormatUtil
 import utils.KoreanUtil
-import java.text.DecimalFormat
 
 class CartManager {
 

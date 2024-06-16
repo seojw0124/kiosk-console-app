@@ -1,7 +1,5 @@
-import model.CartInfo
 import model.OrderInfo
 import utils.FormatUtil
-import java.text.DecimalFormat
 
 class OrderManager {
 

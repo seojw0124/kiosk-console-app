@@ -2,10 +2,6 @@ import model.CategoryInfo
 
 class CategoryManager(private val categories: ArrayList<CategoryInfo>) {
 
-    fun getCategoryItem(categoryId: Int): CategoryInfo? {
-        return categories.find { it.categoryId == categoryId }
-    }
-
     fun getItemCount(): Int {
         return categories.size - 1 // 장바구니 카테고리는 제외
     }
