@@ -6,29 +6,28 @@ import java.text.DecimalFormat
 class OrderManager {
 
     private var order: OrderInfo? = null
+    private var totalPrice = 0
 
     fun addOrderItem(item: OrderInfo) {
         order = item
     }
 
     fun isOrderListEmpty(): Boolean {
-        return order?.itemList?.isEmpty() ?: true
+        return order == null
     }
 
     fun getLastOrderItemId(): Int {
-        return order?.itemList?.last()?.cartId ?: 0
+        return order!!.orderId
     }
 
     fun showReceipt() {
-        var totalPrice = 0
-
         println(
             """
         ====================================
                     << 주문 번호: ${order!!.orderId} >>
         결제일: ${order!!.orderDate}
         
-    """.trimIndent()
+        """.trimIndent()
         )
         order!!.itemList.forEach {
             totalPrice += it.price * it.quantity
@@ -41,7 +40,7 @@ class OrderManager {
         
         0. 뒤로가기
         ====================================
-    """.trimIndent()
+        """.trimIndent()
         )
     }
 }

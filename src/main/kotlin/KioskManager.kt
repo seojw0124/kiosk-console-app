@@ -6,7 +6,11 @@ import java.time.LocalDateTime
 import kotlin.system.exitProcess
 
 class KioskManager {
-    private lateinit var globalManager: GlobalManager
+    private lateinit var categoryManager: CategoryManager
+    private lateinit var menuManager: MenuManager
+    private lateinit var cartManager: CartManager
+    private lateinit var orderManager: OrderManager
+
     private var money: Int = 0
 
     fun initKiosk() {
@@ -19,12 +23,10 @@ class KioskManager {
     }
 
     private fun initGlobalManager() {
-        val categoryManager = CategoryManager(initCategoryData())
-        val menuManager = MenuManager(initMenuData())
-        val cartManager = CartManager()
-        val orderManager = OrderManager()
-
-        globalManager = GlobalManager(categoryManager, menuManager, cartManager, orderManager)
+        categoryManager = CategoryManager(initCategoryData())
+        menuManager = MenuManager(initMenuData())
+        cartManager = CartManager()
+        orderManager = OrderManager()
     }
 
     private fun inputMoney(): Int {
@@ -45,12 +47,12 @@ class KioskManager {
 
     private fun runKiosk() {
         while (true) {
-            globalManager.categoryManager.showCategory()
+            categoryManager.showCategory()
             val selectedCategoryId = getSelectedCategoryId()
 
             if (selectedCategoryId == 0) {
                 break
-            } else if (selectedCategoryId == 8) {
+            } else if (selectedCategoryId == 9) {
                 handleCart()
                 continue
             }
@@ -63,8 +65,8 @@ class KioskManager {
             try {
                 val categoryId = readInt()
                 return when (categoryId) {
-                    in 1..globalManager.categoryManager.getItemCount() -> categoryId
-                    8 -> categoryId
+                    in 1..categoryManager.getItemCount() -> categoryId
+                    9 -> categoryId
                     0 -> categoryId
                     else -> throw IndexOutOfBoundsException()
                 }
@@ -76,12 +78,12 @@ class KioskManager {
 
     private fun handleMenu(categoryId: Int) {
         while (true) {
-            globalManager.menuManager.showDetailMenu(categoryId)
+            menuManager.showDetailMenu(categoryId)
             print("메뉴를 선택하세요(0: 뒤로가기): ")
             val itemId = getSelectedMenuItemId()
             if (itemId == 0) break
 
-            val item = globalManager.menuManager.getMenuItem(categoryId, itemId)
+            val item = menuManager.getMenuItem(categoryId, itemId)
             item?.let {
                 it.displayDetailInfo()
                 val quantity = getQuantity()
@@ -95,8 +97,7 @@ class KioskManager {
             try {
                 val itemId = readInt()
                 return when (itemId) {
-                    in 1..globalManager.categoryManager.getItemCount() -> itemId
-                    8 -> itemId
+                    in 1..categoryManager.getItemCount() -> itemId
                     0 -> itemId
                     else -> throw IndexOutOfBoundsException()
                 }
@@ -119,10 +120,10 @@ class KioskManager {
                 when (answer) {
                     "y" -> {
                         val cartId =
-                            if (globalManager.cartManager.isCartEmpty()) {
+                            if (cartManager.isCartEmpty()) {
                                 1
                             } else {
-                                globalManager.cartManager.getLastCartItemId() + 1
+                                cartManager.getLastCartItemId() + 1
                             }
                         val cartInfo = CartInfo(
                             cartId,
@@ -131,7 +132,7 @@ class KioskManager {
                             item.price,
                             quantity
                         )
-                        globalManager.cartManager.addCartItem(cartInfo, item.categoryId)
+                        cartManager.addCartItem(cartInfo, item.categoryId)
                         break
                     }
                     "n" -> {
@@ -147,7 +148,7 @@ class KioskManager {
     }
 
     private fun handleCart() {
-        globalManager.cartManager.showMyCart(money)
+        cartManager.showMyCart(money)
 
         print("메뉴를 선택하세요: ")
         val selectedCartMenu = readInt()
@@ -159,22 +160,22 @@ class KioskManager {
     }
 
     private fun orderCartItem() {
-        if (globalManager.cartManager.isCartEmpty()) {
+        if (cartManager.isCartEmpty()) {
             println("장바구니가 비어있습니다. 상품을 추가해주세요.")
             return
         }
 
-        if (money < globalManager.cartManager.getCartItemTotalPrice()) {
-            println("현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(globalManager.cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.")
+        if (money < cartManager.getCartItemTotalPrice()) {
+            println("현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.")
             return
         }
 
-        val cartItemList = globalManager.cartManager.getMyCartItemList()
+        val cartItemList = cartManager.getMyCartItemList()
         val orderId =
-            if (globalManager.orderManager.isOrderListEmpty()) {
+            if (orderManager.isOrderListEmpty()) {
                 1
             } else {
-                globalManager.orderManager.getLastOrderItemId() + 1
+                orderManager.getLastOrderItemId() + 1
             }
 
         // 결제 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
@@ -182,15 +183,13 @@ class KioskManager {
         val orderDate = FormatUtil().getFormattedDate(localDateTime)
         val orderItem = OrderInfo(orderId, cartItemList, orderDate)
 
-        globalManager.orderManager.addOrderItem(orderItem) // 나중에 cartManager에서 영수증 출력하기로 바꾸기
-
-        println(orderItem)
+        orderManager.addOrderItem(orderItem)
 
         print("결제가 완료되었습니다. 영수증을 출력하시겠습니까? (y/n): ")
         val answer = readln().lowercase()
         if (answer == "y") {
-            globalManager.orderManager.showReceipt()
-            globalManager.cartManager.clearMyCart()
+            orderManager.showReceipt()
+            cartManager.clearMyCart()
         } else {
             println("주문번호: $orderId")
         }
@@ -211,14 +210,17 @@ class KioskManager {
         }
     }
 
+    private fun readInt(): Int {
+        return readln().toIntOrNull() ?: 0
+    }
+
     /* 데이터 초기화 */
     private fun initCategoryData(): ArrayList<CategoryInfo> {
         return arrayListOf(
             CategoryInfo(1, "음료"),
             CategoryInfo(2, "푸드"),
             CategoryInfo(3, "상품"),
-            CategoryInfo(8, "장바구니"),
-            CategoryInfo(9, "결제목록")
+            CategoryInfo(9, "장바구니"),
         )
     }
 
@@ -234,9 +236,5 @@ class KioskManager {
             Product(2, 3, "텀블러", 25000),
             Product(3, 3, "원두", 18000)
         )
-    }
-
-    private fun readInt(): Int {
-        return readln().toIntOrNull() ?: 0
     }
 }
