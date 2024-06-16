@@ -14,7 +14,7 @@ class KioskManager {
     private var money: Int = 0
 
     fun initKiosk() {
-        initGlobalManager()
+        init()
 
         println("***** 정우 카페에 오신 것을 환영합니다 *****")
 
@@ -22,7 +22,7 @@ class KioskManager {
         runKiosk()
     }
 
-    private fun initGlobalManager() {
+    private fun init() {
         categoryManager = CategoryManager(initCategoryData())
         menuManager = MenuManager(initMenuData())
         cartManager = CartManager()
@@ -47,7 +47,7 @@ class KioskManager {
 
     private fun runKiosk() {
         while (true) {
-            categoryManager.showCategory()
+            categoryManager.showCategoryList()
             val selectedCategoryId = getSelectedCategoryId()
 
             if (selectedCategoryId == 0) {
@@ -65,7 +65,7 @@ class KioskManager {
             try {
                 val categoryId = readInt()
                 return when (categoryId) {
-                    in 1..categoryManager.getItemCount() -> categoryId
+                    in 1..categoryManager.getCategoryItemCount() -> categoryId
                     9 -> categoryId
                     0 -> categoryId
                     else -> throw IndexOutOfBoundsException()
@@ -87,7 +87,7 @@ class KioskManager {
             item?.let {
                 it.displayDetailInfo()
                 val quantity = getQuantity()
-                addItemToCart(it, quantity)
+                addMenuItemToCart(it, quantity)
             }
         }
     }
@@ -97,7 +97,7 @@ class KioskManager {
             try {
                 val itemId = readInt()
                 return when (itemId) {
-                    in 1..categoryManager.getItemCount() -> itemId
+                    in 1..categoryManager.getCategoryItemCount() -> itemId
                     0 -> itemId
                     else -> throw IndexOutOfBoundsException()
                 }
@@ -107,7 +107,7 @@ class KioskManager {
         }
     }
 
-    private fun addItemToCart(item: MenuItem, quantity: Int) {
+    private fun addMenuItemToCart(item: MenuItem, quantity: Int) {
         if (money < item.price * quantity) {
             println("잔액이 부족합니다. 다른 상품을 선택해주세요. 현재 잔액: ${FormatUtil().decimalFormat(money)}원")
             return

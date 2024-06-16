@@ -12,14 +12,6 @@ class MenuManager(list: ArrayList<MenuItem>) {
         }
     }
 
-    fun getMenuItemCount(categoryId: Int): Int {
-        return when (categoryId) {
-            1 -> drinks.size
-            2 -> foods.size
-            else -> products.size
-        }
-    }
-
     fun showDetailMenu(categoryId: Int) {
         val categoryName = when (categoryId) {
             1 -> "음료"
