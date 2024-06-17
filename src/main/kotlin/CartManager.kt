@@ -21,7 +21,6 @@ class CartManager {
             "개"
         }
         println("${item.itemName} ${item.quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
-        println(cart)
     }
 
     fun getLastCartItemId(): Int {
@@ -52,7 +51,7 @@ class CartManager {
         totalPrice = 0
         println(
             """
-            ====================================
+            ************************************
                         << 장바구니 >>
         """.trimIndent()
         )
@@ -67,7 +66,7 @@ class CartManager {
             잔액: ${FormatUtil().decimalFormat(money)}원
             
             1. 결제하기    0. 뒤로가기
-            ====================================
+            ************************************
         """.trimIndent()
         )
     }

@@ -34,7 +34,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
         when (categoryId) {
             1 -> drinks.forEach { it.displaySimpleInfo() }
             2 -> foods.forEach { it.displaySimpleInfo() }
-            3 -> products.forEach { it.displaySimpleInfo() }
+            else -> products.forEach { it.displaySimpleInfo() }
         }
         println("""
             

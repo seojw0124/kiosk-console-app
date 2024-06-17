@@ -1,4 +1,9 @@
-open class MenuItem(val itemId: Int, val categoryId: Int, val name: String, val price: Int) {
+open class MenuItem(
+    val itemId: Int,
+    val categoryId: Int,
+    val name: String,
+    val price: Int
+) {
 
     fun displaySimpleInfo() {
         println("${itemId}. $name")

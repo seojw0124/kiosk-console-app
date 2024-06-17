@@ -33,9 +33,9 @@ class KioskManager {
         println("소지하고 계신 금액을 입력해주세요.")
         while (true) {
             try {
-                val originMoney = readInt()
-                if (originMoney > 0) {
-                    return originMoney
+                val money = readInt()
+                if (money > 0) {
+                    return money
                 } else {
                     throw IllegalArgumentException()
                 }
@@ -50,13 +50,11 @@ class KioskManager {
             categoryManager.showCategoryList()
             val selectedCategoryId = getSelectedCategoryId()
 
-            if (selectedCategoryId == 0) {
-                break
-            } else if (selectedCategoryId == 9) {
-                handleCart()
-                continue
+            when (selectedCategoryId) {
+                0 -> break
+                9 -> handleCart()
+                else -> handleMenu(selectedCategoryId)
             }
-            handleMenu(selectedCategoryId)
         }
     }
 
@@ -109,7 +107,7 @@ class KioskManager {
 
     private fun addMenuItemToCart(item: MenuItem, quantity: Int) {
         if (money < item.price * quantity) {
-            println("잔액이 부족합니다. 다른 상품을 선택해주세요. 현재 잔액: ${FormatUtil().decimalFormat(money)}원")
+            println("\n잔액이 부족합니다. 다른 상품을 선택해주세요. 현재 잔액: ${FormatUtil().decimalFormat(money)}원\n")
             return
         }
 
@@ -148,6 +146,11 @@ class KioskManager {
     }
 
     private fun handleCart() {
+        if (cartManager.isCartEmpty()) {
+            println("\n장바구니가 비어있습니다. 상품을 추가해주세요.\n")
+            return
+        }
+
         cartManager.showMyCart(money)
 
         print("메뉴를 선택하세요: ")
@@ -160,13 +163,8 @@ class KioskManager {
     }
 
     private fun orderCartItem() {
-        if (cartManager.isCartEmpty()) {
-            println("장바구니가 비어있습니다. 상품을 추가해주세요.")
-            return
-        }
-
         if (money < cartManager.getCartItemTotalPrice()) {
-            println("현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.")
+            println("\n현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.\n")
             return
         }
 

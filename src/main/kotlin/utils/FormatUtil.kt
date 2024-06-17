@@ -3,7 +3,7 @@ package utils
 import java.text.DecimalFormat
 
 class FormatUtil {
-    val decimalFormat = DecimalFormat("#,###")
+    private val decimalFormat = DecimalFormat("#,###")
 
     fun decimalFormat(value: Int): String {
         return decimalFormat.format(value)
