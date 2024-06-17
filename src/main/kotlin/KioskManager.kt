@@ -37,9 +37,9 @@ class KioskManager {
                 if (money > 0) {
                     return money
                 } else {
-                    throw IllegalArgumentException()
+                    throw Exception()
                 }
-            } catch (e: IllegalArgumentException) {
+            } catch (e: Exception) {
                 println("소지하고 계신 금액을 다시 입력해주세요")
             }
         }
