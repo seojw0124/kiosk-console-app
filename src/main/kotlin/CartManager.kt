@@ -41,6 +41,7 @@ class CartManager {
     }
 
     fun getCartItemTotalPrice(): Int {
+        totalPrice = 0
         cart.forEach {
             totalPrice += it.price * it.quantity
         }

@@ -23,7 +23,7 @@ class OrderManager {
         println(
             """
         ====================================
-                    << 주문 번호: ${order!!.orderId} >>
+                 << 주문 번호: ${order!!.orderId} >>
         결제일: ${order!!.orderDate}
         
         """.trimIndent()
