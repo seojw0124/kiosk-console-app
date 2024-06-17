@@ -12,7 +12,7 @@ class CategoryManager(private val categoryList: ArrayList<CategoryInfo>) {
                        << 정우 카페 >>
         """.trimIndent())
         categoryList.forEach {
-            if (it.categoryId == 8) println()
+            if (it.categoryId == 9) println()
             println("${it.categoryId}. ${it.categoryName}")
         }
         println("""

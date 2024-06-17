@@ -80,7 +80,7 @@ class KioskManager {
         while (true) {
             menuManager.showDetailMenu(categoryId)
             print("메뉴를 선택하세요(0: 뒤로가기): ")
-            val itemId = getSelectedMenuItemId()
+            val itemId = getSelectedMenuItemId(categoryId)
             if (itemId == 0) break
 
             val item = menuManager.getMenuItem(categoryId, itemId)
@@ -92,12 +92,12 @@ class KioskManager {
         }
     }
 
-    private fun getSelectedMenuItemId(): Int {
+    private fun getSelectedMenuItemId(categoryId: Int): Int {
         while (true) {
             try {
                 val itemId = readInt()
                 return when (itemId) {
-                    in 1..categoryManager.getCategoryItemCount() -> itemId
+                    in 1..menuManager.getMenuItemCount(categoryId) -> itemId
                     0 -> itemId
                     else -> throw IndexOutOfBoundsException()
                 }
@@ -229,12 +229,12 @@ class KioskManager {
             Drink(1, 1, "아메리카노", 4500),
             Drink(2, 1, "카페라떼", 5500),
             Drink(3, 1, "카푸치노", 5000),
+            Drink(4, 1, "바닐라라떼", 6000),
             Food(1, 2, "카스테라", 4500),
             Food(2, 2, "케이크", 5700),
             Food(3, 2, "마카롱", 2700),
             Product(1, 3, "머그컵", 14000),
             Product(2, 3, "텀블러", 25000),
-            Product(3, 3, "원두", 18000)
         )
     }
 }
