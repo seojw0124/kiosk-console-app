@@ -22,7 +22,7 @@ class OrderManager {
 
         println(
             """
-        ************************************
+        **************************************
                  << 주문 번호: ${order!!.orderId} >>
         결제일: ${order!!.orderDate}
         
@@ -38,7 +38,7 @@ class OrderManager {
         총액: ${FormatUtil().decimalFormat(totalPrice)}원
         
         0. 뒤로가기
-        ************************************
+        **************************************
         """.trimIndent()
         )
     }

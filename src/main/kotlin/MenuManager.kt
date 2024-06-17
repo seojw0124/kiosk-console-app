@@ -28,7 +28,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
         }
         println("""
             
-            ====================================
+            ======================================
                        << $categoryName 메뉴 >>
         """.trimIndent())
         when (categoryId) {
@@ -39,7 +39,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
         println("""
             
             0. 뒤로가기
-            ====================================
+            ======================================
         """.trimIndent())
     }
 }

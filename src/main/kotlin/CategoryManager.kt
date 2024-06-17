@@ -8,7 +8,7 @@ class CategoryManager(private val categoryList: ArrayList<CategoryInfo>) {
 
     fun showCategoryList() {
         println("""
-            ====================================
+            ======================================
                        << 정우 카페 >>
         """.trimIndent())
         categoryList.forEach {
@@ -18,7 +18,7 @@ class CategoryManager(private val categoryList: ArrayList<CategoryInfo>) {
         println("""
             
             0. 프로그램 종료
-            ====================================
+            ======================================
         """.trimIndent())
         print("카테고리를 선택하세요: ")
     }
