@@ -36,11 +36,11 @@ class Kiosk {
                 if (money > 0) {
                     return money
                 } else {
-                    throw Exception()
+                    throw IllegalArgumentException()
                 }
             } catch (e: NumberFormatException) {
                 println("숫자가 아닙니다. 다시 입력해주세요.")
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
                 println("소지하고 계신 금액을 다시 입력해주세요")
             }
         }
@@ -220,7 +220,7 @@ class Kiosk {
                 }
             } catch (e: NumberFormatException) {
                 print("숫자가 아닙니다. 다시 입력해주세요. 수량: ")
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
                 print("수량은 1개 이상 입력해주세요. 수량: ")
             }
         }
