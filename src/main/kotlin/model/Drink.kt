@@ -1,3 +1,5 @@
+package model
+
 class Drink(
     itemId: Int,
     categoryId: Int,

@@ -1,3 +1,5 @@
+package model
+
 class Product(
     itemId: Int,
     categoryId: Int,

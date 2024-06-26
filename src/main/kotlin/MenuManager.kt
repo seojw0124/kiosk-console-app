@@ -1,3 +1,5 @@
+import model.MenuItem
+
 class MenuManager(list: ArrayList<MenuItem>) {
 
     private val drinks = list.filter { it.categoryId == 1 }

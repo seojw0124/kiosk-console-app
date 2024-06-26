@@ -1,3 +1,5 @@
+package model
+
 open class MenuItem(
     val itemId: Int,
     val categoryId: Int,

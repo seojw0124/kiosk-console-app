@@ -1,3 +1,5 @@
+package model
+
 class Food(
     itemId: Int,
     categoryId: Int,
