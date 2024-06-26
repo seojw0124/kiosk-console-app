@@ -32,11 +32,14 @@ class Kiosk {
         while (true) {
             try {
                 val money = readInt()
+                println("money: $money")
                 if (money > 0) {
                     return money
                 } else {
                     throw Exception()
                 }
+            } catch (e: NumberFormatException) {
+                println("숫자가 아닙니다. 다시 입력해주세요.")
             } catch (e: Exception) {
                 println("소지하고 계신 금액을 다시 입력해주세요")
             }
@@ -60,13 +63,14 @@ class Kiosk {
         while (true) {
             try {
                 val categoryId = readInt()
-                return when (categoryId) {
-                    in 1..categoryManager.getItemCount() -> categoryId
-                    9 -> categoryId
-                    0 -> categoryId
-                    else -> throw IndexOutOfBoundsException()
+                if (categoryId == 0 || categoryId == 9 || categoryId in 1..categoryManager.getItemCount()) {
+                    return categoryId
+                } else {
+                    throw IllegalArgumentException()
                 }
-            } catch (e: IndexOutOfBoundsException) {
+            } catch (e: NumberFormatException) {
+                print("숫자가 아닙니다. 다시 입력해주세요. 카테고리: ")
+            } catch (e: IllegalArgumentException) {
                 print("없는 카테고리입니다. 다시 입력해주세요. 카테고리: ")
             }
         }
@@ -95,9 +99,11 @@ class Kiosk {
                 return when (itemId) {
                     in 1..menuManager.getItemCount(categoryId) -> itemId
                     0 -> itemId
-                    else -> throw IndexOutOfBoundsException()
+                    else -> throw IllegalArgumentException()
                 }
-            } catch (e: IndexOutOfBoundsException) {
+            } catch (e: NumberFormatException) {
+                print("숫자가 아닙니다. 다시 입력해주세요. 메뉴: ")
+            } catch (e: IllegalArgumentException) {
                 print("없는 메뉴입니다. 다시 입력해주세요. 메뉴: ")
             }
         }
@@ -135,9 +141,9 @@ class Kiosk {
                         println("장바구니에 담기를 취소했습니다.")
                         break
                     }
-                    else -> throw Exception()
+                    else -> throw IllegalArgumentException()
                 }
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
                 print("잘못된 입력입니다. 다시 입력해주세요(y/n): ")
             }
         }
@@ -151,12 +157,20 @@ class Kiosk {
 
         cartManager.showMyCart(money)
 
-        print("메뉴를 선택하세요: ")
-        val selectedCartMenu = readInt()
-        when (selectedCartMenu) {
-            1 -> orderCartItem()
-            0 -> return
-            else -> println("없는 번호입니다. 다시 입력해주세요.")
+        print("옵션을 선택하세요: ")
+        while (true) {
+            try {
+                val selectedMenu = readInt()
+                when (selectedMenu) {
+                    1 -> orderCartItem()
+                    0 -> break
+                    else -> throw IllegalArgumentException()
+                }
+            } catch (e: NumberFormatException) {
+                print("숫자가 아닙니다. 다시 입력해주세요. 옵션: ")
+            } catch (e: IllegalArgumentException) {
+                print("없는 옵션입니다. 다시 입력해주세요. 옵션: ")
+            }
         }
     }
 
@@ -195,19 +209,25 @@ class Kiosk {
     }
 
     private fun getQuantity(): Int {
+        print("수량을 입력하세요: ")
         while (true) {
-            print("수량을 입력하세요: ")
-            val quantity = readInt()
-            if (quantity > 0) {
-                return quantity
-            } else {
-                println("수량은 1 이상이어야 합니다. 다시 입력해주세요.")
+            try {
+                val quantity = readInt()
+                if (quantity > 0) {
+                    return quantity
+                } else {
+                    throw Exception()
+                }
+            } catch (e: NumberFormatException) {
+                print("숫자가 아닙니다. 다시 입력해주세요. 수량: ")
+            } catch (e: Exception) {
+                print("수량은 1개 이상 입력해주세요. 수량: ")
             }
         }
     }
 
     private fun readInt(): Int {
-        return readln().toIntOrNull() ?: 0
+        return readln().toIntOrNull() ?: throw NumberFormatException()
     }
 
     /* 데이터 초기화 */
