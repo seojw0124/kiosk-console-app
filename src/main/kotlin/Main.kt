@@ -1,4 +1,4 @@
 fun main() {
-    val kioskManager = KioskManager()
-    kioskManager.initKiosk()
+    val kiosk = Kiosk()
+    kiosk.start()
 }

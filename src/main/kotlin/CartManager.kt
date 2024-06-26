@@ -7,7 +7,7 @@ class CartManager {
     private val cart = mutableListOf<CartInfo>() // 장바구니 리스트는 추가, 삭제가 빈번하게 일어나므로 MutableList 사용
     private var totalPrice = 0
 
-    fun addCartItem(item: CartInfo, categoryId: Int) {
+    fun addItem(item: CartInfo, categoryId: Int) {
         val sameCartItem = cart.find { it.itemName == item.itemName }
         if (sameCartItem != null) {
             sameCartItem.quantity += item.quantity
@@ -23,15 +23,15 @@ class CartManager {
         println("${item.itemName} ${item.quantity}${KoreanUtil().getCompleteWordByJongsung(word)} 장바구니에 담았습니다.")
     }
 
-    fun getLastCartItemId(): Int {
+    fun getLastItemId(): Int {
         return cart.last().cartId
     }
 
-    fun isCartEmpty(): Boolean {
+    fun isEmpty(): Boolean {
         return cart.isEmpty()
     }
 
-    fun getMyCartItemList(): List<CartInfo> {
+    fun getMyItemList(): List<CartInfo> {
         return cart
     }
 
@@ -39,7 +39,7 @@ class CartManager {
         cart.clear()
     }
 
-    fun getCartItemTotalPrice(): Int {
+    fun getItemTotalPrice(): Int {
         totalPrice = 0
         cart.forEach {
             totalPrice += it.price * it.quantity

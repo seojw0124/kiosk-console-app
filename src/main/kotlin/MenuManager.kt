@@ -6,7 +6,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
     private val foods = list.filter { it.categoryId == 2 }
     private val products = list.filter { it.categoryId == 3 }
 
-    fun getMenuItem(categoryId: Int, itemId: Int): MenuItem? {
+    fun getItem(categoryId: Int, itemId: Int): MenuItem? {
         return when (categoryId) {
             1 -> drinks.find { it.itemId == itemId }
             2 -> foods.find { it.itemId == itemId }
@@ -14,7 +14,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
         }
     }
 
-    fun getMenuItemCount(categoryId: Int): Int {
+    fun getItemCount(categoryId: Int): Int {
         return when (categoryId) {
             1 -> drinks.size
             2 -> foods.size
@@ -22,7 +22,7 @@ class MenuManager(list: ArrayList<MenuItem>) {
         }
     }
 
-    fun showDetailMenu(categoryId: Int) {
+    fun showDetailItem(categoryId: Int) {
         val categoryName = when (categoryId) {
             1 -> "음료"
             2 -> "푸드"

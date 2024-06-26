@@ -5,15 +5,15 @@ class OrderManager {
 
     private var order: OrderInfo? = null
 
-    fun addOrderItem(item: OrderInfo) {
+    fun addItem(item: OrderInfo) {
         order = item
     }
 
-    fun isOrderListEmpty(): Boolean {
+    fun isEmpty(): Boolean {
         return order == null
     }
 
-    fun getLastOrderItemId(): Int {
+    fun getLastItemId(): Int {
         return order!!.orderId
     }
 

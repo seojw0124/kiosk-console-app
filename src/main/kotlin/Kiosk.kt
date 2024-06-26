@@ -3,7 +3,7 @@ import utils.FormatUtil
 import java.time.LocalDateTime
 import kotlin.system.exitProcess
 
-class KioskManager {
+class Kiosk {
     private lateinit var categoryManager: CategoryManager
     private lateinit var menuManager: MenuManager
     private lateinit var cartManager: CartManager
@@ -11,7 +11,7 @@ class KioskManager {
 
     private var money: Int = 0
 
-    fun initKiosk() {
+    fun start() {
         init()
 
         println("***** 정우 카페에 오신 것을 환영합니다 *****")
@@ -45,7 +45,7 @@ class KioskManager {
 
     private fun runKiosk() {
         while (true) {
-            categoryManager.showCategoryList()
+            categoryManager.showList()
             val selectedCategoryId = getSelectedCategoryId()
 
             when (selectedCategoryId) {
@@ -61,7 +61,7 @@ class KioskManager {
             try {
                 val categoryId = readInt()
                 return when (categoryId) {
-                    in 1..categoryManager.getCategoryItemCount() -> categoryId
+                    in 1..categoryManager.getItemCount() -> categoryId
                     9 -> categoryId
                     0 -> categoryId
                     else -> throw IndexOutOfBoundsException()
@@ -74,12 +74,12 @@ class KioskManager {
 
     private fun handleMenu(categoryId: Int) {
         while (true) {
-            menuManager.showDetailMenu(categoryId)
+            menuManager.showDetailItem(categoryId)
             print("메뉴를 선택하세요(0: 뒤로가기): ")
             val itemId = getSelectedMenuItemId(categoryId)
             if (itemId == 0) break
 
-            val item = menuManager.getMenuItem(categoryId, itemId)
+            val item = menuManager.getItem(categoryId, itemId)
             item?.let {
                 it.displayDetailInfo()
                 val quantity = getQuantity()
@@ -93,7 +93,7 @@ class KioskManager {
             try {
                 val itemId = readInt()
                 return when (itemId) {
-                    in 1..menuManager.getMenuItemCount(categoryId) -> itemId
+                    in 1..menuManager.getItemCount(categoryId) -> itemId
                     0 -> itemId
                     else -> throw IndexOutOfBoundsException()
                 }
@@ -116,10 +116,10 @@ class KioskManager {
                 when (answer) {
                     "y" -> {
                         val cartId =
-                            if (cartManager.isCartEmpty()) {
+                            if (cartManager.isEmpty()) {
                                 1
                             } else {
-                                cartManager.getLastCartItemId() + 1
+                                cartManager.getLastItemId() + 1
                             }
                         val cartInfo = CartInfo(
                             cartId,
@@ -128,7 +128,7 @@ class KioskManager {
                             item.price,
                             quantity
                         )
-                        cartManager.addCartItem(cartInfo, item.categoryId)
+                        cartManager.addItem(cartInfo, item.categoryId)
                         break
                     }
                     "n" -> {
@@ -144,7 +144,7 @@ class KioskManager {
     }
 
     private fun handleCart() {
-        if (cartManager.isCartEmpty()) {
+        if (cartManager.isEmpty()) {
             println("\n장바구니가 비어있습니다. 상품을 추가해주세요.\n")
             return
         }
@@ -161,17 +161,17 @@ class KioskManager {
     }
 
     private fun orderCartItem() {
-        if (money < cartManager.getCartItemTotalPrice()) {
-            println("\n현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(cartManager.getCartItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.\n")
+        if (money < cartManager.getItemTotalPrice()) {
+            println("\n현재 잔액은 ${FormatUtil().decimalFormat(money)}원으로 ${FormatUtil().decimalFormat(cartManager.getItemTotalPrice() - money)}원이 부족해서 결제할 수 없습니다.\n")
             return
         }
 
-        val cartItemList = cartManager.getMyCartItemList()
+        val cartItemList = cartManager.getMyItemList()
         val orderId =
-            if (orderManager.isOrderListEmpty()) {
+            if (orderManager.isEmpty()) {
                 1
             } else {
-                orderManager.getLastOrderItemId() + 1
+                orderManager.getLastItemId() + 1
             }
 
         // 결제 시간은 현재 시간으로 설정(2024-06-14 00:00:00)
@@ -179,7 +179,7 @@ class KioskManager {
         val orderDate = FormatUtil().getFormattedDate(localDateTime)
         val orderItem = OrderInfo(orderId, cartItemList, orderDate)
 
-        orderManager.addOrderItem(orderItem)
+        orderManager.addItem(orderItem)
 
         print("결제가 완료되었습니다. 영수증을 출력하시겠습니까? (y/n): ")
         val answer = readln().lowercase()
